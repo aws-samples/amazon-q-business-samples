@@ -1,0 +1,6 @@
+ fastapi
+ uvicorn 
+ boto3 
+ authlib 
+ requests 
+ python-multipart
