@@ -1,3 +1,5 @@
+# Implementing secure API access to your Amazon Q Business applications with IAM Federation user access management
+
 [Amazon Q Business](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/what-is.html) provides a rich set of APIs to perform administrative tasks and to build an AI-assistant with customized user experience for your organization. The sample python scripts in this repository illustrate how to use [Amazon Q Business APIs](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/api-ref.html) when using [IAM Federation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/making-sigv4-authenticated-api-calls-iam.html) for user access management. You will use these illustrative scripts to learn:
 
 1. As an Amazon Q Business administrator, use APIs to automate creation of Amazon Q Business applications using IAM Federation for user access management.
