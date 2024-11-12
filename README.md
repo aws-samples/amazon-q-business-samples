@@ -2,7 +2,7 @@
 
 [Amazon Q Business](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/what-is.html) provides a rich set of APIs to perform administrative tasks and to build an AI-assistant with customized user experience. This repository contains code samples illustrating Amazon Q Business APIs for different uses.
 
-1.[Implementing secure API access to your Amazon Q Business applications with IAM Federation user access management](iam-federation-samples) 
+1. [Implementing secure API access to your Amazon Q Business applications with IAM Federation user access management](iam-federation-samples) 
 
 ## Security
 
