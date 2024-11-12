@@ -19,10 +19,10 @@ Amazon Q Business IAM Federation requires federating the user identities provisi
 
 4. Users in your organization can use Amazon Q Business web experience, a built-in application, to authenticate with your IdP and chat with the AI assistant. However to address unique requirements of your organization, your developers can build a custom application or integrate a preexisting enterprise portal with the Amazon Q business application using the Amazon Q Business APIs, for the users to authenticate with your IdP, and chat with the  AI assistant. The sample scripts `samlapp.py`, `oidcapp.py` in conjunction with `simple_aq.py` illustrate how to acquire AWS Sig V4 credentials that include user identity of your authenticated users, and then use these credentials to invoke Amazon Q Business conversation APIs and implement chat functionality.
 
-# Prerequisites
+## Prerequisites
 To implement the sample use case described here, you will need an AWS account. You can [sign up for an AWS account](https://portal.aws.amazon.com/billing/signup) if you don't already have one. You also need an Okta account. The samples cover workflows for both OIDC and SAML 2.0, so you can follow either one or both workflows based on your business needs. You need to create application integrations for OIDC or SAML mode, and then configure the respective IAM identity providers in your AWS account, which will be required to create and configure your Amazon Q Business applications. You will also require a [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) with [AWS SDK for python](https://aws.amazon.com/sdk-for-python/) installed.
 
-# Using the sample scripts
+## Using the sample scripts
 
 Clone this repository in a directory.
 
