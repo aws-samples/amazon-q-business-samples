@@ -16,10 +16,11 @@ Key features include:
 
 
 ## Index of samples, tutorials and how-to guides
+
 List of Amazon Q Business code samples, tutorials, and how-to guides available in this and other repositories.
 
-* `external` denotes an external content or repository
-* `internal` denotes content is local to this repository
+* `external` means content stored outside this repository
+* `local` means content stored in this repository
 
 ### Guides
 
@@ -39,7 +40,7 @@ List of Amazon Q Business code samples, tutorials, and how-to guides available i
 
 * #### Python
     1. `external` [Custom data source sample](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/samples/custom_ds.py) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/samples/README.md)
-    1. `internal` [Secure API access with IAM Federation](iam-federation-samples)
+    1. `local` [Secure API access with IAM Federation](iam-federation-samples)
     1. `external` [IAM Identity Center trusted identity propagation](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/tree/main/webapp) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/webapp/README.md)
 
 * #### Cloud Formation (CF) templates
