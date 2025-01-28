@@ -1,15 +1,38 @@
-# Code samples to work with Amazon Q Business APIs
+# Amazon Q Business Samples
+
+This repository provides guides, use cases, and code samples for implementing [Amazon Q Business](https://aws.amazon.com/q/business/).
+
+## Contents
+
+- [Introduction to Amazon Q Business](introduction-to-qbusiness/README.md) - Learn the basics of the service
+- [Identity management](identity-management/README.md) - Guides for configuring identity providers
+- [Connectors](connectors/README.md) - Tips for setting up connectors
+- [Code samples](code-samples/README.md) - Library of code samples
 
 
-[Amazon Q Business](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/what-is.html) provides a rich set of APIs to perform administrative tasks and to build an AI-assistant with customized user experience. This repository contains code samples illustrating Amazon Q Business APIs for different uses.
+## Getting started
 
-1. [Implementing secure API access to your Amazon Q Business applications with IAM Federation user access management](iam-federation-samples) 
+With Amazon Q Business, you can build an interactive chat application environment for your organization’s end users, using a combination of your enterprise data and large language model knowledge, or enterprise data only.
 
-## Security
+To get started, verify your AWS account is allowlisted for Amazon Q Business, then follow the tutorial below to create your first application.
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+### Allow-listing Amazon Q Business
+
+1. `internal` [Permissions required to use Amazon Q Business](./introduction-to-qbusiness/allow-listing-qbusiness.md)
+
+### Create your first application
+
+1. `external` [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
+
+
+## Contributing
+
+We welcome community contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Reporting security issues
+
+Please refer to the [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) document for information on how to report security issues. Do **not** create a public GitHub issue for security-related concerns.
 
 ## License
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
-
+This library is licensed under the MIT-0 License. See the [LICENSE](./LICENSE) file.
