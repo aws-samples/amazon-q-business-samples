@@ -1,6 +1,6 @@
 # Amazon Q Business Samples
 
-> This repository contains how-to guides, introduction to key use cases, and code samples to help you accelerate Amazon Q Business implementation.
+> This repository provides guides, use cases, and code samples for implementing Amazon Q Business.
 
 [Amazon Q Business](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/what-is.html) is a generative AI assistant that helps organizations find information, gain insights, and take action. It answers questions, provides summaries, generates content, and completes tasks securely using enterprise data and systems. Users can access the assistant through APIs, web chat, browser extensions, and integrations with Slack and Microsoft Teams.
 
@@ -36,22 +36,26 @@ List of Amazon Q Business code samples, tutorials, and how-to guides available i
     1. `external` [Configuring custom web application with Okta and IAM Identity Center](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/docs/tutorials/okta/config-webapp-using-okta.md)
 
 ### Code samples
+
 * #### Python
     1. `external` [Custom data source sample](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/samples/custom_ds.py) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/samples/README.md)
     1. `internal` [Secure API access with IAM Federation](iam-federation-samples)
     1. `external` [IAM Identity Center trusted identity propagation](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/tree/main/webapp) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/webapp/README.md)
 
 * #### Cloud Formation (CF) templates
+
     1. `external` [Configure IAM Identity Center](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/qb-api-idc-config.yaml) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/README.md)
     1. `external` [Create Amazon Cognito user pool](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/qb-api-poc-cognito.yaml) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/README.md)
 
 ### Workshops and blogs
 
 * #### Workshops
+
     1. `external` [Innovate on enterprise data with generative AI & Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business)
     1. `external` [Integrate your application with Amazon Q Business identity-aware APIs](https://catalog.workshops.aws/amazon-q-business-api)
 
 * #### Connectors
+
     1. `external` [Introducing document-level sync reports: Enhanced data sync visibility in Amazon Q Business](https://aws.amazon.com/blogs/machine-learning/introducing-document-level-sync-reports-enhanced-data-sync-visibility-in-amazon-q-business/)
     1. `external` [Connect Amazon Q Business to Microsoft SharePoint Online using least privilege access controls](https://aws.amazon.com/blogs/machine-learning/connect-amazon-q-business-to-microsoft-sharepoint-online-using-least-privilege-access-controls/)
 
@@ -68,8 +72,7 @@ List of Amazon Q Business code samples, tutorials, and how-to guides available i
 
 ## Reporting security issues
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information on how to report any security issues. Please do **not** create a public github issue.
-
+Please refer to the [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) document for information on how to report security issues. Do **not** create a public GitHub issue for security-related concerns.
 
 ## License
 
