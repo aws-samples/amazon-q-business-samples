@@ -5,6 +5,9 @@ Index of Amazon Q Business security and identity management related code samples
 * `external` means content stored outside this repository
 * `local` means content stored in this repository
 
+## Choosing access federation
+![Choosing access federation](./img/access-choice.png)
+
 ## How-to
 
 1. `external`[Register web application with Amazon Cognito](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/docs/tutorials/cognito/register-webapp-with-cognito.md)
@@ -45,6 +48,8 @@ Index of Amazon Q Business security and identity management related code samples
     1. `external` [Configure IAM Identity Center](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/qb-api-idc-config.yaml) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/README.md)
     1. `external` [Create Amazon Cognito user pool](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/qb-api-poc-cognito.yaml) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/README.md)
 
+## Identity-aware APIs
+![Identity-aware APIs](./img/id-aware-api.png)
 
 ## License
 

@@ -1,6 +1,6 @@
 # Amazon Q Business Samples
 
-This repository provides guides, use cases, and code samples for implementing Amazon Q Business.
+This repository provides guides, use cases, and code samples for implementing [Amazon Q Business](https://aws.amazon.com/q/business/).
 
 ## Contents
 
@@ -12,62 +12,20 @@ This repository provides guides, use cases, and code samples for implementing Am
 
 ## Getting started
 
-To get started ensure your AWS account has been allow-listed to access [Amazon Q Business](https://aws.amazon.com/q/business/) service. Then proceed to creating your first application with [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application).
+With Amazon Q Business, you can build an interactive chat application environment for your organization’s end users, using a combination of your enterprise data and large language model knowledge, or enterprise data only.
+
+To get started, verify your AWS account is allowlisted for Amazon Q Business, then follow the tutorials below to create your first application.
 
 ### Allow-listing Amazon Q Business
 
-Your AWS organization administrator must provide your AWS identity sufficient [AWS IAM permissions](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) to use the Amazon Q Business service.
-
-- To grant Amazon Q Business access to your identity, your administrator must attach the following permissions (Note: `qapps` and `iam` are optional):
-
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "QBusinessFullAccess",
-            "Effect": "Allow",
-            "Action": [
-                "qbusiness:*",
-                "qapps:*",
-                "iam:CreateServiceLinkedRole"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-- If you're project plans to use customer managed key, add the following permissions:
-```
-"kms:DescribeKey"
-"kms:CreateGrant"
-```
-
-- If you're using IAM Identity Center, add the following permissions:
-```
-"sso:CreateApplication"
-"sso:PutApplicationAuthenticationMethod"
-"sso:PutApplicationAccessScope"
-"sso:PutApplicationGrant"
-"sso:DeleteApplication"
-"sso-directory:DescribeGroup"
-"sso-directory:DescribeUser"
-"sso:DescribeApplication"
-"sso:DescribeInstance"
-"organizations:DescribeOrganizations"
-```
-
-- To allow Amazon Q Business application administrator to assign user subscriptions, use the following role policy
-```
-"user-subscriptions:UpdateClaim"
-"user-subscriptions:CreateClaim"
-```
-
-For more information on the fine-grained action and resource permissions in Bedrock, check out the Bedrock Developer Guide.
+1. `internal` [Permissions required to use Amazon Q Business](./introduction-to-qbusiness/allow-listing-qbusiness.md)
 
 ### Create your first application
+
 1. `external` [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
+
+### User-aware safe and secure deployment
+![Safety and security](./introduction-to-qbusiness/img/safety-arch.png)
 
 ## Contributing
 
