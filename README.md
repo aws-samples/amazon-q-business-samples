@@ -12,13 +12,13 @@
 
 ## Getting started
 
-To get started ensure your AWS account has been allow-listed to access [Amazon Q Business](https://aws.amazon.com/q/business/) service.
+To get started ensure your AWS account has been allow-listed to access [Amazon Q Business](https://aws.amazon.com/q/business/) service. Then proceed to creating your first application tutorial at [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application).
 
-### Enable AWS IAM permissions for Amazon Q Business
+#### Enable AWS IAM permissions for Amazon Q Business
 
 Your AWS organization administrator must provide your AWS identity sufficient [AWS IAM permissions](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) to use the Amazon Q Business service.
 
-- To grant Amazon Q Business access to your identity, your administrator must attach the following permissions:
+- To grant Amazon Q Business access to your identity, your administrator must attach the following permissions (Note: `qapps` and `iam` are optional):
 
 ```
 {
@@ -27,7 +27,11 @@ Your AWS organization administrator must provide your AWS identity sufficient [A
         {
             "Sid": "QBusinessFullAccess",
             "Effect": "Allow",
-            "Action": ["qbusiness:*", "qapps:*"],
+            "Action": [
+                "qbusiness:*",
+                "qapps:*",
+                "iam:CreateServiceLinkedRole"
+            ],
             "Resource": "*"
         }
     ]
@@ -46,48 +50,22 @@ Your AWS organization administrator must provide your AWS identity sufficient [A
 "sso:PutApplicationAccessScope"
 "sso:PutApplicationGrant"
 "sso:DeleteApplication"
+"sso-directory:DescribeGroup"
+"sso-directory:DescribeUser"
+"sso:DescribeApplication"
+"sso:DescribeInstance"
+"organizations:DescribeOrganizations"
 ```
 - To allow Amazon Q to assign user subscriptions, use the following role policy
 ```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "QBusinessSubscriptionPermissions",
-            "Effect": "Allow",
-            "Action": [
-                "qbusiness:UpdateSubscription",
-                "qbusiness:CreateSubscription",
-                "qbusiness:CancelSubscription",
-                "qbusiness:ListSubscriptions"
-            ],
-            "Resource": [
-             "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}",
-             "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}/subscription/{{subscription_id}}"
-            ]
-        },
-        {
-            "Sid": "QBusinessServicePermissions",
-            "Effect": "Allow",
-            "Action": [
-                "user-subscriptions:UpdateClaim",
-                "user-subscriptions:CreateClaim",
-                "organizations:DescribeOrganizations",
-                "iam:CreateServiceLinkedRole",
-                "sso-directory:DescribeGroup",
-                "sso-directory:DescribeUser",
-                "sso:DescribeApplication",
-                "sso:DescribeInstance"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
-}
+"user-subscriptions:UpdateClaim"
+"user-subscriptions:CreateClaim"
 ```
 
 For more information on the fine-grained action and resource permissions in Bedrock, check out the Bedrock Developer Guide.
+
+### Create your first application
+1. `external` [Learn to create and configure Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
 
 ## Contributing
 
