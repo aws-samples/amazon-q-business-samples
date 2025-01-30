@@ -6,15 +6,15 @@ This repository provides guides, use cases, and code samples for implementing Am
 
 - [Introduction to Amazon Q Business](introduction-to-qbusiness) - Learn the basics of the service
 - [Identity management](identity-management) - Guides for configuring identity providers
-- [Connectors](connectors) - Tips for setting up connector
+- [Connectors](connectors) - Tips for setting up connectors
 - [Code samples](code-samples) - Library of code samples
 
 
 ## Getting started
 
-To get started ensure your AWS account has been allow-listed to access [Amazon Q Business](https://aws.amazon.com/q/business/) service. Then proceed to creating your first application tutorial at [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application).
+To get started ensure your AWS account has been allow-listed to access [Amazon Q Business](https://aws.amazon.com/q/business/) service. Then proceed to creating your first application with [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application).
 
-#### Enable AWS IAM permissions for Amazon Q Business
+### Allow-listing Amazon Q Business
 
 Your AWS organization administrator must provide your AWS identity sufficient [AWS IAM permissions](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) to use the Amazon Q Business service.
 
