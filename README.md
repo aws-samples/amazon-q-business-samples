@@ -1,6 +1,6 @@
 # Amazon Q Business Samples
 
-> This repository provides guides, use cases, and code samples for implementing Amazon Q Business.
+This repository provides guides, use cases, and code samples for implementing Amazon Q Business.
 
 ## Contents
 
@@ -38,11 +38,12 @@ Your AWS organization administrator must provide your AWS identity sufficient [A
 }
 ```
 
-- If you're using a customer managed key, add the following permissions:
+- If you're project plans to use customer managed key, add the following permissions:
 ```
 "kms:DescribeKey"
 "kms:CreateGrant"
 ```
+
 - If you're using IAM Identity Center, add the following permissions:
 ```
 "sso:CreateApplication"
@@ -56,7 +57,8 @@ Your AWS organization administrator must provide your AWS identity sufficient [A
 "sso:DescribeInstance"
 "organizations:DescribeOrganizations"
 ```
-- To allow Amazon Q to assign user subscriptions, use the following role policy
+
+- To allow Amazon Q Business application administrator to assign user subscriptions, use the following role policy
 ```
 "user-subscriptions:UpdateClaim"
 "user-subscriptions:CreateClaim"
@@ -65,7 +67,7 @@ Your AWS organization administrator must provide your AWS identity sufficient [A
 For more information on the fine-grained action and resource permissions in Bedrock, check out the Bedrock Developer Guide.
 
 ### Create your first application
-1. `external` [Learn to create and configure Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
+1. `external` [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
 
 ## Contributing
 
