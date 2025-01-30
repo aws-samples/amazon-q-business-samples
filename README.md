@@ -24,7 +24,9 @@ To get started, verify your AWS account is allowlisted for Amazon Q Business, th
 
 1. `external` [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
 
-### Safe and secure architecture
+
+## Safe and secure architecture
+
 Amazon Q Business implements a secure, user-aware architecture with privacy protection at every level.
 
 ![Safety and security](./introduction-to-qbusiness/img/safety-arch.png)
