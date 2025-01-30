@@ -14,7 +14,7 @@ This repository provides guides, use cases, and code samples for implementing [A
 
 With Amazon Q Business, you can build an interactive chat application environment for your organization’s end users, using a combination of your enterprise data and large language model knowledge, or enterprise data only.
 
-To get started, verify your AWS account is allowlisted for Amazon Q Business, then follow the tutorials below to create your first application.
+To get started, verify your AWS account is allowlisted for Amazon Q Business, then follow the tutorial below to create your first application.
 
 ### Allow-listing Amazon Q Business
 
@@ -24,12 +24,6 @@ To get started, verify your AWS account is allowlisted for Amazon Q Business, th
 
 1. `external` [Learn to create and configure Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business/en-US/200-configure-application)
 
-
-## Safe and secure architecture
-
-Amazon Q Business implements a secure, user-aware architecture with privacy protection at every level.
-
-![Safety and security](./introduction-to-qbusiness/img/safety-arch.png)
 
 ## Contributing
 

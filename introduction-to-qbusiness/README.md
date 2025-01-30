@@ -12,6 +12,12 @@ Key features include:
 - No-code application creation using natural language through Amazon Q Apps
 - More than 50 automated actions for tasks like Jira ticket creation and case updates
 
+## User-aware architecture
+
+Amazon Q Business implements a secure, user-aware architecture with privacy protection at every level.
+
+![Safety and security](./img/safety-arch.png)
+
 ## Workshops
 1. `external` [Innovate on enterprise data with generative AI & Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business)
 
