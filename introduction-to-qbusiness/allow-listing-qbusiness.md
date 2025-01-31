@@ -26,7 +26,7 @@ To use Amazon Q Business, your AWS account administrator needs to configure the 
 }
 ```
 
-#### [Recommended] Add [service-linked role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create-service-linked-role.html) (includes all the permissions predefined by the service)
+#### Add [service-linked role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create-service-linked-role.html) useful to reduce custom roles (includes predefined permissions by the service)
 ```
 "iam:CreateServiceLinkedRole"
 ```
