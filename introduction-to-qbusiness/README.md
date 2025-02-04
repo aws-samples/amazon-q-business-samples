@@ -21,8 +21,9 @@ Amazon Q Business implements a secure, user-aware architecture with privacy prot
 ## Workshops
 1. `external` [Innovate on enterprise data with generative AI & Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business)
 
-## Customer use case
+## Customer use cases
 
+1. `external` [Principal Financial Group uses QnABot on AWS and Amazon Q Business to enhance workforce productivity with generative AI](https://aws.amazon.com/blogs/machine-learning/principal-financial-group-uses-qnabot-on-aws-and-amazon-q-business-to-enhance-workforce-productivity-with-generative-ai/)
 1. `external` [London Stock Exchange Group uses Amazon Q Business to enhance post-trade client services](https://aws.amazon.com/blogs/machine-learning/london-stock-exchange-group-uses-amazon-q-business-to-enhance-post-trade-client-services/)
 
 
