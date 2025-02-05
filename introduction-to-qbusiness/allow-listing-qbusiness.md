@@ -65,4 +65,9 @@ To use Amazon Q Business, your AWS account administrator needs to configure the 
 "organizations:DescribeOrganizations"
 ```
 
+#### Add additional user subscription management permissions (if using AWS Orgnanizations Identity Center) 
+```
+"organizations:DescribeOrganizations"
+```
+
 For detailed information on required permissions, refer to the [Amazon Q Business documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/setting-up.html#permissions).
