@@ -1,10 +1,10 @@
 # Configure Entra as IAM Federation SAML provider for Amazon Q Business
 
-This guide shows how to configure Amazon Q Business with Microsoft Entra ID for SAML-based single sign-on using AWS IAM Identity Federation.
+This guide shows how to configure Amazon Q Business with Microsoft Entra for SAML-based single sign-on using AWS IAM Identity Federation.
 
 
 ## Audience
-This guide is for Amazon Q Business administrators, Microsoft Entra ID administrators, solution architects, and developers.
+This guide is for Amazon Q Business administrators, Microsoft Entra administrators, solution architects, and developers.
 
 
 ## Prerequisites
@@ -12,24 +12,26 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
     - Manage Amazon Q Business applications
     - Configure AWS IAM Identity Federation providers
     - Create AWS IAM roles and policies
-- Microsoft Entra ID account with permissions to:
+- Microsoft Entra account with permissions to:
     - Manage Enterprise applications
     - [Optional] Manage users and groups
 
-
 ## Configuration steps
+
+![iam entra saml configuration steps](./img/iam-entra-saml-process.png)
+
 - [Step 1: Create Enterprise Application in Microsoft Entra](#step-1-create-enterprise-application-in-microsoft-entra)
-- [Step 2: Create AWS IAM Federation SAML provider](#step-2-create-aws-iam-federation-saml-provider)
+- [Step 2: Create AWS IAM Identity Provider for SAML](#step-2-create-aws-iam-identity-provider-for-saml)
 - [Step 3: Create AWS IAM Role for Amazon Q Business web experience](#step-3-create-aws-iam-role-for-amazon-q-business-web-experience)
 - [Step 4: Create Amazon Q Business application](#step-4-create-amazon-q-business-application)
-- [Step 5: Update IAM Role for web experience](#step-5-update-iam-role-for-web-experience)
+- [Step 5: Update AWS IAM Role for web experience](#step-5-update-aws-iam-role-for-web-experience)
 - [Step 6: Configure Microsoft Entra enterprise application](#step-6-configure-microsoft-entra-enterprise-application)
 - [Step 7: Access the Amazon Q Business application](#step-7-access-the-amazon-q-business-application)
 
 
 ### Step 1: Create Enterprise Application in Microsoft Entra
 
-**Required Role:** Microsoft Entra ID Administrator
+**Required Role:** Microsoft Entra Administrator
 
 1. Sign in to the [Microsoft Entra console](https://entra.microsoft.com/#home)
 1. Create and configure the application:
@@ -52,7 +54,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 > - [ ] Copy the Entra application user access URL
 
 
-### Step 2: Create AWS IAM Federation SAML provider
+### Step 2: Create AWS IAM Identity Provider for SAML 
 
 **Required Role:** AWS IAM Administrator
 
@@ -152,7 +154,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 > - [ ] Copy the web experience (deployed) URL
 
 
-### Step 5: Update IAM Role for web experience
+### Step 5: Update AWS IAM Role for web experience
 
 **Required Role:** AWS IAM Administrator
 
@@ -180,7 +182,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 6: Configure Microsoft Entra enterprise application
 
-**Required Role:** Microsoft Entra ID Administrator
+**Required Role:** Microsoft Entra Administrator
 
 1. Sign in to the [Microsoft Entra console](https://entra.microsoft.com/#home)
 1. Select `Applications` → `Enterprise Applications`from the left navigation
