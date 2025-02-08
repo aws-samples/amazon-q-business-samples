@@ -54,7 +54,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 2: Create AWS IAM Federation SAML provider
 
-> `Required Role:` AWS IAM Administrator
+**Required Role:** AWS IAM Administrator
 
 1. Sign in to the [AWS IAM Console](https://console.aws.amazon.com/iam/home)
 1. In the left navigation pane, select `Identity Provider` → `Add provider`
@@ -69,7 +69,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 3: Create AWS IAM Role for Amazon Q Business Web experience
 
-> `Required Role:` AWS IAM Administrator
+**Required Role:** AWS IAM Administrator
 
 1. Sign in to the [AWS IAM Console](https://console.aws.amazon.com/iam/home)
 1. In the left navigation pane, select `Roles` → `Create role`
@@ -127,7 +127,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 4: Create Amazon Q Business application
 
-> `Required Role:` Amazon Q Business Administrator
+**Required Role:** Amazon Q Business Administrator
 
 1. Sign in to the [Amazon Q Business Console](https://console.aws.amazon.com/amazonq/business/applications)
 1. In the left navigation pane, select `Applications` → `Create application`
@@ -154,7 +154,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 5: Update IAM Role for web experience
 
-> `Required Role:` AWS IAM Administrator
+**Required Role:** AWS IAM Administrator
 
 1. Sign in to the [AWS IAM Console](https://console.aws.amazon.com/iam/home)
 1. In the left navigation pane, select `Roles` and locate the web experience role created in Step 2
@@ -187,7 +187,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 7: Access the Amazon Q Business application
 
-> `Required Role:` Entra-authorized Amazon Q Business user
+**Required Role:** Entra-authorized Amazon Q Business user
 
 1. Access Amazon Q Business:
     - Open the Web Experience URL
