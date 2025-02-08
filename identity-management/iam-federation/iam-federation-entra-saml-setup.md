@@ -170,10 +170,6 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 1. Update trust policy:
     - Under the `Trust relationships` tab, select `Edit trust policy`
     - Update the `SAML:aud` value with your web experience URL from Step 4, adding `/saml` at the end (see screenshot [S1](#s1-web-experience-iam-role-trust-policy))
-    <details>
-    <summary>sample trust policy screenshot</summary>
-    ![Sample trust policy](./img/iam-fed-saml-trust-policy.png)
-    </details>
     - Select `Update policy`
 
 > [!IMPORTANT]
