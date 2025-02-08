@@ -169,7 +169,8 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
     - Enter a policy name and select `Create policy`
 1. Update trust policy:
     - Under the `Trust relationships` tab, select `Edit trust policy`
-    - Update the `SAML:aud` value with your web experience URL from Step 4, adding `/saml` at the end (see [screenshot-s1](#s1-web-experience-iam-role-trust-policy))
+    - Update the `SAML:aud` value with your web experience URL from Step 4, adding `/saml` at the end
+    - See [screenshot-s1](#screenshot-s1-web-experience-iam-role-trust-policy) for reference
     - Select `Update policy`
 
 > [!IMPORTANT]
@@ -194,7 +195,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
     - Update `Unique User Identifier (Name ID)` claim:
         - Set `Name identifier format` to `Persistent`
         - Set `Source attribute` to `user.objectId`
-        - For example, see [screenshot-s2](#s2-microsoft-entra-claims---name-id-or-unique-user-identifier)
+        - See [screenshot-s2](#screenshot-s2-microsoft-entra-claims---name-id-or-unique-user-identifier) for reference
     - Add new or edit `PrincipalTag:Email` claim:
         - Set `Name` to `PrincipalTag:Email`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
@@ -207,10 +208,10 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
         - Set `Name` to `Role`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
         - Set `Source attribute` to literal string `"<web-experience-iam-role-arn>,<iam-identity-provider-arn>"`
-        - For example, see [screenshot-s3](#s3-microsoft-entra-claims---role)
+        - See [screenshot-s3](#screenshot-s3-microsoft-entra-claims---role) for reference
 
 > [!IMPORTANT]
-> - [ ] Verify all single sign-on settings including Entity ID, Reply URL, and claims configurations (see [screenshot-s4](#s4-microsoft-entra-single-sign-on-settings))
+> - [ ] Verify all single sign-on settings including Entity ID, Reply URL, and claims configurations (see [screenshot-s4](#screenshot-s4-microsoft-entra-single-sign-on-settings))
 
 
 ### Step 7: Access the Amazon Q Business application
@@ -222,16 +223,17 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
     - Enter your Entra credentials
     - Access the Amazon Q Business chat interface
 
-## Screenshots
+## References
 
-#### S1: Web experience IAM Role trust policy
+
+#### Screenshot-S1: Web experience IAM Role trust policy
 ![Web exp SAML IAM trust policy](./img/iam-entra-saml-trust-policy.png)
 
-#### S2: Microsoft Entra Claims - Name ID or Unique User Identifier
+#### Screenshot-S2: Microsoft Entra Claims - Name ID or Unique User Identifier
 ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-uuid.png)
 
-#### S3: Microsoft Entra Claims - Role
+#### Screenshot-S3: Microsoft Entra Claims - Role
 ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-role.png)
 
-#### S4: Microsoft Entra single sign-on settings
+#### Screenshot-S4: Microsoft Entra single sign-on settings
 ![Entra single sign-on settings](./img/iam-entra-saml-sso.png)
