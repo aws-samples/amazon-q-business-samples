@@ -29,7 +29,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra ID administr
 
 ### Step 1: Create Enterprise Application in Microsoft Entra
 
-> `Required Role:` Microsoft Entra ID Administrator
+**Required Role:** Microsoft Entra ID Administrator
 
 1. Sign in to the [Microsoft Entra console](https://entra.microsoft.com/#home)
 1. Create and configure the application:
