@@ -1,6 +1,6 @@
-# Configure Entra as IAM Federation SAML provider for Amazon Q Business
+# Configure Amazon Q Business SAML single sign-on using Microsoft Entra and AWS IAM Federation
 
-This guide shows how to configure Amazon Q Business with Microsoft Entra for SAML-based single sign-on using AWS IAM Identity Federation.
+Learn how to set up SAML-based single sign-on for Amazon Q Business using Microsoft Entra and AWS IAM Federation (Identity Provider).
 
 
 ## Audience
