@@ -1,6 +1,6 @@
 # Configure Amazon Q Business SAML single sign-on using Microsoft Entra and AWS IAM Federation
 
-Learn how to set up SAML-based single sign-on for Amazon Q Business using Microsoft Entra and AWS IAM Federation (Identity Provider).
+Learn how to set up SAML-based single sign-on for Amazon Q Business using Microsoft Entra and AWS IAM Federation (AWS IAM Identity Provider).
 
 
 ## Audience
@@ -8,6 +8,7 @@ This guide is for Amazon Q Business administrators, Microsoft Entra administrato
 
 
 ## Prerequisites
+
 - AWS account with AWS Management Console access and permissions to:
     - Manage Amazon Q Business applications
     - Configure AWS IAM Identity Federation providers
@@ -16,7 +17,8 @@ This guide is for Amazon Q Business administrators, Microsoft Entra administrato
     - Manage Enterprise applications
     - [Optional] Manage users and groups
 
-## Configuration steps
+
+## Configuration process
 
 ![iam entra saml configuration steps](./img/iam-entra-saml-process.png)
 
@@ -227,15 +229,22 @@ This guide is for Amazon Q Business administrators, Microsoft Entra administrato
 
 ## References
 
+1. [Amazon Q Business Web Experience AWS IAM Role](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html)
 
-#### Screenshot-S1: Web experience IAM Role trust policy
-![Web exp SAML IAM trust policy](./img/iam-entra-saml-trust-policy.png)
+1. [Creating an Amazon Q Business application using Identity Federation through IAM](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/create-application-iam.html)
 
-#### Screenshot-S2: Microsoft Entra Claims - Name ID or Unique User Identifier
-![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-uuid.png)
+1. [Troubleshoot SAML federation with AWS IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_saml.html)
 
-#### Screenshot-S3: Microsoft Entra Claims - Role
-![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-role.png)
+1. [SAML authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/architecture/auth-saml)
 
-#### Screenshot-S4: Microsoft Entra single sign-on settings
-![Entra single sign-on settings](./img/iam-entra-saml-sso.png)
+1. ##### Screenshot-S1: Web experience IAM Role trust policy
+    ![Web exp SAML IAM trust policy](./img/iam-entra-saml-trust-policy.png)
+
+1. ##### Screenshot-S2: Microsoft Entra Claims - Name ID or Unique User Identifier
+    ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-uuid.png)
+
+1. ##### Screenshot-S3: Microsoft Entra Claims - Role
+    ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-role.png)
+
+1. ##### Screenshot-S4: Microsoft Entra single sign-on settings
+    ![Entra single sign-on settings](./img/iam-entra-saml-sso.png)
