@@ -227,6 +227,15 @@ This guide is for Amazon Q Business administrators, Microsoft Entra administrato
     - Enter your Entra credentials
     - Access the Amazon Q Business chat interface
 
+## Clean up
+
+Delete all resources created with this guide to prevent additional charges.
+
+1. Delete Amazon Q Business Application and associated IAM roles
+1. Delete AWS IAM Identity Provider
+1. Delete Microsoft Entra Enterprise application
+
+
 ## References
 
 1. [Amazon Q Business Web Experience AWS IAM Role](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html)
