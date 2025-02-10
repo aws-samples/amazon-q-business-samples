@@ -18,6 +18,24 @@ This guide is for Amazon Q Business administrators, Microsoft Entra administrato
     - [Optional] Manage users and groups
 
 
+## Required Roles
+
+Setting up Amazon Q Business SAML-based single sign-on requires coordination across multiple roles. While one person with sufficient access privileges may handle all roles during proof-of-concept implementations, typical deployments involve:
+
+- Microsoft Entra administrator
+    - Manages identity and access in Microsoft Entra ID (formerly Azure AD).
+    - Controls user accounts, authentication policies, and access to Microsoft cloud resources.
+- AWS IAM administrator
+    -Manages AWS Identity and Access Management services and security policies.
+    - Creates and maintains IAM users, groups, roles, and implements least-privilege access across AWS services.
+- Amazon Q Business administrator
+    - Creates and configures Amazon Q Business applications and manages data source connections.
+    - Adds groups and users to access the Amazon Q Business web interface and provisions user subscriptions.
+- Amazon Q Business user
+    - Uses Amazon Q to obtain AI-powered answers, insights, and collaborate with team members.
+    - Accesses information from connected data sources and shares findings through the Amazon Q Business web interface.
+
+
 ## Configuration process
 
 ![iam entra saml configuration steps](./img/iam-entra-saml-process.png)
