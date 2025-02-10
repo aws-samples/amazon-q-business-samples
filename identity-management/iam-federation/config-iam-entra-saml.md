@@ -99,9 +99,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
 1. Configure the trust policy:
     - Copy the following policy
         <details>
-
         <summary>Trust policy reference</summary>
-
         See [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html) for latest version.
 
         ```json
@@ -135,7 +133,6 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
             ]
         }
         ```
-
         </details>
     - Replace the IAM identity provider ARN (obtained in Step 2) in the Principal field
     - Select `Next`
@@ -183,6 +180,193 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
 1. Add permissions:
     - Under the `Permissions` tab, select `Add permissions` > `Create inline policy`
     - Copy the latest required permissions from the [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html)
+        <details>
+        <summary>Web experience permissions</summary>
+        See [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html) for latest version.
+
+        ```json
+        {
+            "Version": "2012-10-17",
+            "Statement": [{
+                    "Sid": "QBusinessConversationPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qbusiness:Chat",
+                        "qbusiness:ChatSync",
+                        "qbusiness:ListMessages",
+                        "qbusiness:ListConversations",
+                        "qbusiness:PutFeedback",
+                        "qbusiness:DeleteConversation",
+                        "qbusiness:GetWebExperience",
+                        "qbusiness:GetApplication",
+                        "qbusiness:ListPlugins",
+                        "qbusiness:GetChatControlsConfiguration",
+                        "qbusiness:ListRetrievers"
+                        "qbusiness:ListPluginActions",
+                        "qbusiness:ListAttachments",
+                        "qbusiness:GetMedia"
+                    ],
+                    "Resource": "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}"
+                },
+                {
+                    "Sid": "QBusinessPluginDiscoveryPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qbusiness:ListPluginTypeMetadata",
+                        "qbusiness:ListPluginTypeActions"
+                    ],
+                    "Resource": "*"
+                },
+                {
+                    "Sid": "QBusinessRetrieverPermission",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qbusiness:GetRetriever"
+                    ],
+                    "Resource": [
+                        "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}",
+                        "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}/retriever/*"
+                    ]
+                },
+                {
+                    "Sid": "QBusinessAutoSubscriptionPermission",
+                    "Effect": "Allow",
+                    "Action":  [
+                        "user-subscriptions:CreateClaim" 
+                    ],
+                    "Condition":  {
+                        "Bool":  {
+                            "user-subscriptions:CreateForSelf": "true" 
+                        },
+                        "StringEquals":  {
+                            "aws:CalledViaLast": "qbusiness.amazonaws.com" 
+                        }
+                    },
+                    "Resource":  [
+                        "*" 
+                    ]
+                },
+                {
+                    "Sid": "QBusinessKMSDecryptPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "kms:Decrypt"
+                    ],
+                    "Resource": [
+                        "arn:aws:kms:{{region}}:{{account_id}}:key/[[key_id]]"
+                    ],
+                    "Condition": {
+                        "StringLike": {
+                            "kms:ViaService": [
+                                "qbusiness.{{region}}.amazonaws.com",
+                                "qapps.{{region}}.amazonaws.com"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Sid": "QAppsResourceAgnosticPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:CreateQApp",
+                        "qapps:PredictQApp",
+                        "qapps:PredictProblemStatementFromConversation",
+                        "qapps:PredictQAppFromProblemStatement",
+                        "qapps:ListQApps",
+                        "qapps:ListLibraryItems",
+                        "qapps:CreateSubscriptionToken"
+                    ],
+                    "Resource": "arn:aws:qbusiness:{{region}}:{{source_account}}:application/{{application_id}}"
+                },
+                {
+                    "Sid": "QAppsAppUniversalPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:DisassociateQAppFromUser"
+                    ],
+                    "Resource": "arn:aws:qapps:{{region}}:{{source_account}}:application/{{application_id}}/qapp/*"
+                },
+                {
+                    "Sid": "QAppsAppOwnerPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:GetQApp",
+                        "qapps:CopyQApp",
+                        "qapps:UpdateQApp",
+                        "qapps:DeleteQApp",
+                        "qapps:ImportDocument",
+                        "qapps:ImportDocumentToQApp",
+                        "qapps:CreateLibraryItem",
+                        "qapps:UpdateLibraryItem",
+                        "qapps:StartQAppSession"
+                    ],
+                    "Resource": "arn:aws:qapps:{{region}}:{{source_account}}:application/{{application_id}}/qapp/*",
+                    "Condition": {
+                        "StringEqualsIgnoreCase": {
+                            "qapps:UserIsAppOwner": "true"
+                        }
+                    }
+                },
+                {
+                    "Sid": "QAppsPublishedAppPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:GetQApp",
+                        "qapps:CopyQApp",
+                        "qapps:AssociateQAppWithUser",
+                        "qapps:GetLibraryItem",
+                        "qapps:CreateLibraryItemReview",
+                        "qapps:AssociateLibraryItemReview",
+                        "qapps:DisassociateLibraryItemReview",
+                        "qapps:StartQAppSession"
+                    ],
+                    "Resource": "arn:aws:qapps:{{region}}:{{source_account}}:application/{{application_id}}/qapp/*",
+                    "Condition": {
+                        "StringEqualsIgnoreCase": {
+                            "qapps:AppIsPublished": "true"
+                        }
+                    }
+                },
+                {
+                    "Sid": "QAppsAppSessionModeratorPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:ImportDocument",
+                        "qapps:ImportDocumentToQAppSession",
+                        "qapps:GetQAppSession",
+                        "qapps:GetQAppSessionMetadata",
+                        "qapps:UpdateQAppSession",
+                        "qapps:UpdateQAppSessionMetadata",
+                        "qapps:StopQAppSession"
+                    ],
+                    "Resource": "arn:aws:qapps:{{region}}:{{source_account}}:application/{{application_id}}/qapp/*/session/*",
+                    "Condition": {
+                        "StringEqualsIgnoreCase": {
+                            "qapps:UserIsSessionModerator": "true"
+                        }
+                    }
+                },
+                {
+                    "Sid": "QAppsSharedAppSessionPermissions",
+                    "Effect": "Allow",
+                    "Action": [
+                        "qapps:ImportDocument",
+                        "qapps:ImportDocumentToQAppSession",
+                        "qapps:GetQAppSession",
+                        "qapps:GetQAppSessionMetadata",
+                        "qapps:UpdateQAppSession"
+                    ],
+                    "Resource": "arn:aws:qapps:{{region}}:{{source_account}}:application/{{application_id}}/qapp/*/session/*",
+                    "Condition": {
+                        "StringEqualsIgnoreCase": {
+                            "qapps:SessionIsShared": "true"
+                        }
+                    }
+                }
+            ]
+        }
+        ```
+        </details>
     - Update the policy with your:
         - AWS Region
         - Account ID
