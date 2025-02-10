@@ -26,7 +26,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
     - Manages identity and access in Microsoft Entra ID (formerly Azure AD).
     - Controls user accounts, authentication policies, and access to Microsoft cloud resources.
 - AWS IAM administrator
-    -Manages AWS Identity and Access Management services and security policies.
+    - Manages AWS Identity and Access Management services and security policies.
     - Creates and maintains IAM users, groups, roles, and implements least-privilege access across AWS services.
 - Amazon Q Business administrator
     - Creates and configures Amazon Q Business applications and manages data source connections.
@@ -233,7 +233,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
         - See [screenshot-s3](#screenshot-s3-microsoft-entra-claims---role) for reference
 
 > [!NOTE]
-> - This claims configuration uses the `user.mail` Entra user attribute for email addresses. Modify the claim to match the appropriate attribute in your Entra setup.
+> - This claims configuration uses the `user.mail` attribute for user email address. Modify the claim to match the appropriate attribute in your Entra setup.
 
 > [!IMPORTANT]
 > - [ ] Verify all single sign-on settings including Entity ID, Reply URL, and claims configurations (see [screenshot-s4](#screenshot-s4-microsoft-entra-single-sign-on-settings))
