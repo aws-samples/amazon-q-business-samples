@@ -232,6 +232,9 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
         - Set `Name` to `Role`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
         - Set `Source attribute` to literal string `"<web-experience-iam-role-arn>,<iam-identity-provider-arn>"`
+            - Replace `<web-experience-iam-role-arn>` with web experience IAM Role ARN from Step 3
+            - Replace `<iam-identity-provider-arn>` with IAM Identity Provider ARN from Step 2
+            - _:exclamation:Note: ARN order must not be changed_
         - See [screenshot-s3](#screenshot-s3-microsoft-entra-claims---role) for reference
 
 > [!IMPORTANT]
