@@ -222,14 +222,12 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
         - Set `Name` to `PrincipalTag:Email`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
         - Set `Source attribute` to `user.mail`
-        > [!NOTE]
-        > This claims configuration uses the `user.mail` attribute for user email address. Modify the claim to match the appropriate attribute in your Entra setup.
+        - > **Note:** This claims configuration uses the `user.mail` attribute for user email address. Modify the claim to match the appropriate attribute in your Entra setup.
     - Add new or edit `RoleSessionName` claim:
         - Set `Name` to `RoleSessionName`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
         - Set `Source attribute` to `user.mail`
-        > [!NOTE]
-        > This claims configuration uses the `user.mail` attribute for user email address. Modify the claim to match the appropriate attribute in your Entra setup.
+        - > **Note:** This claims configuration uses the `user.mail` attribute for user email address. Modify the claim to match the appropriate attribute in your Entra setup.
     - Add new or edit "Role" claim:
         - Set `Name` to `Role`
         - Set `Namespace` to `https://aws.amazon.com/SAML/Attributes`
