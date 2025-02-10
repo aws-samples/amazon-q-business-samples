@@ -100,6 +100,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
     - Copy the following policy
         <details>
         <summary>Trust policy reference</summary>
+        
         See [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html) for latest version.
 
         ```json
@@ -182,6 +183,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
     - Copy the latest required permissions from the [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html)
         <details>
         <summary>Web experience permissions</summary>
+
         See [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html) for latest version.
 
         ```json
