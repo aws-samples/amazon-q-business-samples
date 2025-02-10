@@ -6,7 +6,7 @@ Index of Amazon Q Business security and identity management related code samples
 * `local` means content stored in this repository
 
 ## Choosing access federation
-![Choosing access federation](./img/access-choice.png)
+![Choosing access federation](/static/img/access-choice.png)
 
 ## How-to
 
@@ -49,7 +49,7 @@ Index of Amazon Q Business security and identity management related code samples
     1. `external` [Create Amazon Cognito user pool](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/qb-api-poc-cognito.yaml) | `external` [README](https://github.com/aws-samples/configuring-qbusiness-with-idc-tti/blob/main/cf/README.md)
 
 ## Identity-aware APIs
-![Identity-aware APIs](./img/id-aware-api.png)
+![Identity-aware APIs](/static/img/id-aware-api.png)
 
 ## License
 

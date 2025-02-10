@@ -38,7 +38,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
 
 ## Configuration process
 
-![iam entra saml configuration steps](./img/iam-entra-saml-process.png)
+![iam entra saml configuration steps](/static/img/iam-entra-saml-process.png)
 
 - [Step 1: Create Enterprise Application in Microsoft Entra](#step-1-create-enterprise-application-in-microsoft-entra)
 - [Step 2: Create AWS IAM Identity Provider for SAML](#step-2-create-aws-iam-identity-provider-for-saml)
@@ -100,7 +100,7 @@ Setting up Amazon Q Business SAML-based single sign-on requires coordination acr
     - Copy the following policy
         <details>
         <summary>Trust policy reference</summary>
-        
+
         See [documentation](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/web-experience-iam-role-iam.html) for latest version.
 
         ```json
@@ -456,13 +456,13 @@ Delete all resources created with this guide to prevent additional charges.
 1. [SAML authentication with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/architecture/auth-saml)
 
 1. ##### Screenshot-S1: Web experience IAM Role trust policy
-    ![Web exp SAML IAM trust policy](./img/iam-entra-saml-trust-policy.png)
+    ![Web exp SAML IAM trust policy](/static/img/iam-entra-saml-trust-policy.png)
 
 1. ##### Screenshot-S2: Microsoft Entra Claims - Name ID or Unique User Identifier
-    ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-uuid.png)
+    ![Entra Claims - Unique User Identifier](/static/img/iam-entra-saml-claim-uuid.png)
 
 1. ##### Screenshot-S3: Microsoft Entra Claims - Role
-    ![Entra Claims - Unique User Identifier](./img/iam-entra-saml-claim-role.png)
+    ![Entra Claims - Unique User Identifier](/static/img/iam-entra-saml-claim-role.png)
 
 1. ##### Screenshot-S4: Microsoft Entra single sign-on settings
-    ![Entra single sign-on settings](./img/iam-entra-saml-sso.png)
+    ![Entra single sign-on settings](/static/img/iam-entra-saml-sso.png)

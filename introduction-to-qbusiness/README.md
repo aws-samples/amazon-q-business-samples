@@ -16,7 +16,7 @@ Key features include:
 
 Amazon Q Business implements a secure, user-aware architecture with privacy protection at every level.
 
-![Safety and security](./img/safety-arch.png)
+![Safety and security](/static/img/safety-arch.png)
 
 ## Workshops
 1. `external` [Innovate on enterprise data with generative AI & Amazon Q Business application](https://catalog.workshops.aws/amazon-q-business)
