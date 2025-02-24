@@ -322,4 +322,4 @@ Note:
  - If you're using the resources in other projects, verify before deletion
 
 ## License:
-This library is licensed under the MIT-0 License. See the [LICENSE](/blob/main/LICENSE) file. 
+This library is licensed under the MIT-0 License. See the [LICENSE](/LICENSE) file. 
