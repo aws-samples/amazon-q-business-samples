@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Q ServiceNow Alias Lambda function'
+
+Parameters:
+  ApplicationId:
+    Type: String
+    Description: 'Q Business Application ID'
+  
+  DataSourceId:
+    Type: String
+    Description: 'Q Business Data Source ID'
+    
+  IndexId:
+    Type: String
+    Description: 'Q Business Index ID'
+    
+  ServiceNowHost:
+    Type: String
+    Description: 'ServiceNow instance hostname'
+    
+  ServiceNowUsername:
+    Type: String
+    Description: 'ServiceNow API username'
+    
+  ServiceNowSecretName:
+    Type: String
+    Description: 'Name of the Secret in Secrets Manager containing ServiceNow password'
+    
+  GlobalDomain:
+    Type: String
+    Description: 'Global email domain'
+
+  S3BucketName:
+    Type: String
+    Description: 'S3 Bucket Name for deployment package'
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - logs:DescribeLogStreams
+                  - logs:GetLogEvents
+                Resource:
+                  - !Sub 'arn:aws:logs:*:*:log-group:/aws/qbusiness/*:*'
+              - Effect: Allow
+                Action:
+                  - qbusiness:ListDataSourceSyncJobs
+                  - qbusiness:UpdateUser
+                  - qbusiness:CreateUser
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${ServiceNowSecretName}*'
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-alias-manager'
+      Runtime: python3.9
+      Handler: domain-normalization.lambda_handler
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: deployment-package.zip
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          APPLICATION_ID: !Ref ApplicationId
+          DATA_SOURCE_ID: !Ref DataSourceId
+          INDEX_ID: !Ref IndexId
+          SERVICENOW_HOST: !Ref ServiceNowHost
+          SERVICENOW_USERNAME: !Ref ServiceNowUsername
+          SERVICENOW_SECRET_NAME: !Ref ServiceNowSecretName
+          GLOBAL_DOMAIN: !Ref GlobalDomain
+
+  LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${LambdaFunction}'
+      RetentionInDays: 30
+
+Outputs:
+  LambdaFunctionArn:
+    Description: 'ARN of the Lambda function'
+    Value: !GetAtt LambdaFunction.Arn
+  LambdaFunctionName:
+    Description: 'Name of the Lambda function'
+    Value: !Ref LambdaFunction
