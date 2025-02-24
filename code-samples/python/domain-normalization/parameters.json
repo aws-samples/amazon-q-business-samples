@@ -1,0 +1,35 @@
+[
+    {
+      "ParameterKey": "ApplicationId",
+      "ParameterValue": "your-q-application-id"
+    },
+    {
+      "ParameterKey": "DataSourceId",
+      "ParameterValue": "your-datasource-id"
+    },
+    {
+      "ParameterKey": "IndexId",
+      "ParameterValue": "your-index-id"
+    },
+    {
+      "ParameterKey": "ServiceNowHost",
+      "ParameterValue": "your-instance.service-now.com"
+    },
+    {
+      "ParameterKey": "ServiceNowUsername",
+      "ParameterValue": "your-api-username"
+    },
+    {
+      "ParameterKey": "ServiceNowSecretName",
+      "ParameterValue": "your-secret-name"
+    },
+    {
+      "ParameterKey": "GlobalDomain",
+      "ParameterValue": "@global.domain"
+    },
+    {
+      "ParameterKey": "S3BucketName",
+      "ParameterValue": "domain-normalization-bucket"
+    }
+  ]
+  
