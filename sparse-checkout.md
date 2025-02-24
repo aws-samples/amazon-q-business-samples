@@ -22,7 +22,7 @@ git clone --no-checkout git@github.com:aws-samples/amazon-q-business-samples.git
 cd amazon-q-business-samples
 
 # Set up sparse checkout
-git sparse-checkout set code-samples/python/iam-federation-samples
+git sparse-checkout set code-samples/iam-federation-samples
 
 # Checkout the content
 git checkout main

@@ -24,6 +24,7 @@ This Lambda function manages domain normalization for Amazon Q Business by synch
 ## Deployment Steps
 
 1. Clone the repository via sparse [checkout method](/sparse-checkout.md)
+  - Use `git sparse-checkout set code-samples/domain-normalization`
 
 2. Create a zip file containing the Lambda function:
    ```bash
