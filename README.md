@@ -7,6 +7,7 @@ This repository provides guides, use cases, and code samples for implementing [A
 - [Introduction to Amazon Q Business](introduction-to-qbusiness/README.md) - Learn the basics of the service
 - [Identity management](identity-management/README.md) - Guides for configuring identity providers
 - [Connectors](connectors/README.md) - Tips for setting up connectors
+- [Q index](q-index/README.md) - Learn about Amazon Q index
 - [Code samples](code-samples/README.md) - Library of code samples
 
 
