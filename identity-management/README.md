@@ -32,7 +32,7 @@ When selecting between IAM Identity Center (Identity Center) and IAM Federation,
 1. Third-party Identity Provider integration (IDP) using SAML or OIDC
 1. Federated group synchronization for ACL enforcement - Centrally manage user groups from across data sources
 
-See [frequently asked section](#frequently-asked-questions) for additional guidance.
+See [Frequently asked questions](#frequently-asked-questions) section for additional guidance.
 
 ![Choosing access federation](/static/img/access-choice.png)
 
