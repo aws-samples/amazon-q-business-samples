@@ -94,27 +94,27 @@ This diagram shows how authenticated user identities propagate from enterprise I
 
 ## Frequently asked questions
 
-### 1. Does IAM Identity Center integrate with my identity provider?
+### 1. Does IAM Identity Center integrate with your identity provider?
 
-IAM Identity Center uses SAML and SCIM or System for Cross-domain Identity Management, an open standard protocol, to integrate with your Identity Provider (IdP). Identity Center supports integration with leading IdPs including: Microsoft Entra ID, Ping ID, Okta, OneLogin, and Google Workspace.
+IAM Identity Center uses SAML and SCIM (System for Cross-domain Identity Management), an open standard protocol, to integrate with your Identity Provider (IdP). Identity Center supports integration with leading IdPs including: Microsoft Entra ID, Ping ID, Okta, OneLogin, and Google Workspace.
 
-Any Identity Provider that supports the SAML and SCIM protocol can integrate with Identity Center. Listed below or step-by-step instructions for various IDPs from [Identity source tutorials](https://docs.aws.amazon.com/singlesignon/latest/userguide/tutorials.html):
-1. [Configure SAML and SCIM with Microsoft Entra ID and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/idp-microsoft-entra.html)
-1. [Configure SAML and SCIM with Okta and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-okta.html)
-1. [Configure SAML and SCIM with Google Workspace and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)
-1. [Configure SAML and SCIM with Ping ID - PingOne and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/pingone-idp.html)
-1. [Configure SAML and SCIM with Ping ID - PingFederate and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/pingfederate-idp.html)
-1. [Configure SAML and SCIM with OneLogin and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/onelogin-idp.html)
+Any Identity Provider that supports the SAML and SCIM protocol can integrate with Identity Center. Listed below are step-by-step instructions for various IDPs from [Identity source tutorials](https://docs.aws.amazon.com/singlesignon/latest/userguide/tutorials.html):
+1. `external` [Configure SAML and SCIM with Microsoft Entra ID and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/idp-microsoft-entra.html)
+1. `external` [Configure SAML and SCIM with Okta and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-okta.html)
+1. `external` [Configure SAML and SCIM with Google Workspace and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/gs-gwp.html)
+1. `external` [Configure SAML and SCIM with Ping ID - PingOne and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/pingone-idp.html)
+1. `external` [Configure SAML and SCIM with Ping ID - PingFederate and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/pingfederate-idp.html)
+1. `external` [Configure SAML and SCIM with OneLogin and IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/onelogin-idp.html)
 
-### 2. Why do I need integrate Identity Center with my identity provider?
+### 2. What are the benefits of integrating Identity Center with your identity provider?
 
 By integrating Identity Center with your existing identity provider (Azure AD, Okta, Ping ID), you can leverage your existing identity infrastructure while gaining these benefits for AWS access management.
 
-1. Centralized Identity Management Integrating with Identity Center allows you to manage user identities in one central location. This means you won't need to maintain separate user directories across different systems. As a result, this significantly reduces the administrative overhead involved in managing user identities.
-1. Enhanced Security The integration enables single sign-on (SSO) capabilities across your AWS accounts and applications. This allows you to enforce consistent security policies throughout your organization. You'll have better control over user access and permissions across all your AWS resources.
-1. Improved User Experience Your users will only need to remember one set of credentials to access multiple systems. They can seamlessly access multiple AWS accounts and applications through a single sign-on experience. This reduces password fatigue and the associated security risks that come with managing multiple credentials.
-1. Compliance Benefits The integration makes user access auditing much more straightforward and efficient. It provides streamlined user lifecycle management across your organization. You'll have better control over access permissions and can quickly revoke access when needed.
-1. Operational Efficiency With the integration in place, you can automate user provisioning and deprovisioning processes. This leads to reduced IT support costs as there's less manual intervention needed. The integration also enables faster onboarding and offboarding processes for your organization.
+1. **Centralized Identity Management:** Integrating with Identity Center allows you to manage user identities in one central location. This means you won't need to maintain separate user directories across different systems. As a result, this significantly reduces the administrative overhead involved in managing user identities.
+1. **Enhanced Security:** The integration enables single sign-on (SSO) capabilities across your AWS accounts and applications. This allows you to enforce consistent security policies throughout your organization. You'll have better control over user access and permissions across all your AWS resources.
+1. **Improved User Experience:** Your users will only need to remember one set of credentials to access multiple systems. They can seamlessly access multiple AWS accounts and applications through a single sign-on experience. This reduces password fatigue and the associated security risks that come with managing multiple credentials.
+1. **Compliance Benefits:** The integration makes user access auditing much more straightforward and efficient. It provides streamlined user lifecycle management across your organization. You'll have better control over access permissions and can quickly revoke access when needed.
+1. **Operational Efficiency:** With the integration in place, you can automate user provisioning and deprovisioning processes. This leads to reduced IT support costs as there's less manual intervention needed. The integration also enables faster onboarding and offboarding processes for your organization.
 
 
 ## License
