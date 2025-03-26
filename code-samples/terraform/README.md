@@ -112,7 +112,7 @@ enable_image_extraction = true || false
 
 1. **Clone the Repository**
 
-   Instead of cloning the entire repository, please follow the instructions in the `sparse-checkout.md` file located at `amazon-q-business-samples/sparse-checkout.md` to selectively clone only the required Terraform configurations.
+   To clone only the required Terraform configurations instead of the entire repository, follow the sparse checkout instructions in [sparse-checkout.md](/sparse-checkout.md).
 
 
 2. **Initialize Terraform**
@@ -172,4 +172,6 @@ terraform destroy
 Review the resources to be destroyed and confirm when prompted.
 
 
+## License
 
+This library is licensed under the MIT-0 License. See the [LICENSE](/LICENSE) file.
