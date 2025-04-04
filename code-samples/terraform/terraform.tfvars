@@ -39,3 +39,7 @@ index_type = "ENTERPRISE"
 #Advanced Image Indexing
 enable_image_extraction = true
 
+# sync schedule
+sync_schedule = "cron(0 12 ? * MON *)"  #Every Monday at 12:00 PM UTC
+# sync_schedule = "cron(0 12 * * ? *)"  #Runs daily at 12:00 PM UTC.
+
