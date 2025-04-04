@@ -104,6 +104,7 @@ enable_image_extraction = true || false
 | existing_vpc_id | ID of existing VPC | none | if vpc_option is "use_existing" |
 | index_type | Amazon Q Business index type | "STARTER" | yes |
 | enable_image_extraction | Advanced Visual Indexing Configuration | true | yes |
+| sync_schedule | Cron expression for data source sync schedule (e.g., "cron(0 12 * * ? *)" for daily sync at 12 PM UTC) | string | null | no |
 
 
 

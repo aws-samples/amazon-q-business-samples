@@ -43,6 +43,12 @@ variable "enable_image_extraction" {
   default     = false
 }
 
+variable "sync_schedule" {
+  type        = string
+  description = "Cron expression for sync schedule (optional)"
+  default     = null
+}
+
 resource "aws_s3_bucket" "qbusiness_s3_bucket" {
   count = var.use_existing_s3_bucket ? 0 : 1
   bucket = var.new_s3_bucket_name
@@ -57,6 +63,9 @@ locals {
   source_s3_bucket = var.use_existing_s3_bucket ? data.aws_s3_bucket.existing_s3_bucket_data[0].bucket : aws_s3_bucket.qbusiness_s3_bucket[0].bucket
 }
 
+resource "random_id" "id" {
+  byte_length = 8
+}
 
 
 # VPC Configuration
@@ -167,7 +176,7 @@ resource "awscc_qbusiness_application" "sample-q-biz-app" {
 
 # create an iam role for webexperience
 resource "aws_iam_role" "webexperiencerole" {
-  name = "qbusiness-webexperiencerole"
+  name = "qbusiness-webexperiencerole-${random_id.id.hex}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -195,7 +204,7 @@ resource "aws_iam_role" "webexperiencerole" {
 
 # create an iam policy for webexperience
 resource "aws_iam_policy" "webexperiencepolicy" {
-  name   = "qbusiness-webexperience-policy"
+  name   = "qbusiness-webexperience-policy-${random_id.id.hex}"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -409,7 +418,7 @@ resource "awscc_qbusiness_retriever" "q-retrieve" {
 
 # create an iam role for datasource
 resource "aws_iam_role" "datasourcerole" {
-  name = "qbussiness-datasource-role"
+  name = "qbussiness-datasource-role-${random_id.id.hex}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -436,7 +445,7 @@ resource "aws_iam_role" "datasourcerole" {
 
 # create a iam policy
 resource "aws_iam_policy" "datasourcepolicy" {
-  name   = "qbusiness-datasource-policy"
+  name   = "qbusiness-datasource-policy-${random_id.id.hex}"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -565,6 +574,7 @@ resource "awscc_qbusiness_data_source" "s3_source" {
   display_name   = "s3-source"
   index_id       = awscc_qbusiness_index.q-index.index_id  
   role_arn       = aws_iam_role.datasourcerole.arn
+  sync_schedule  = try(var.sync_schedule, null)
   configuration   = jsonencode({
     type        = "S3"
     bucket_name = local.source_s3_bucket
