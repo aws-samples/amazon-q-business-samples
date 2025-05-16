@@ -47,6 +47,7 @@ This diagram shows how authenticated user identities propagate from enterprise I
 
 ### Workshops
 
+1. `external` [IAM Identity Center: Empowering Secure Access to Generative AI Applications](https://catalog.us-east-1.prod.workshops.aws/workshops/d6323be2-38f4-457e-aaf5-08af211f3681/en-US)
 1. `external` [Integrate your application with Amazon Q Business identity-aware APIs](https://catalog.workshops.aws/amazon-q-business-api)
 
 ### Tutorials
