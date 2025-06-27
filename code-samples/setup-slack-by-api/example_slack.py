@@ -12,7 +12,12 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 import boto3
 
-def validate_prerequisites(application_id: str, index_id: str, secret_arn: str) -> bool:
+
+def validate_prerequisites(
+            application_id: str,
+            index_id: str,
+            secret_arn: str,
+        ) -> bool:
     """
     Validate that the prerequisites exist before creating the data source.
 
@@ -35,7 +40,10 @@ def validate_prerequisites(application_id: str, index_id: str, secret_arn: str) 
         print("    ✅ Application ID is valid")
 
         print("    📇 Checking index...")
-        qbusiness_client.get_index(applicationId=application_id, indexId=index_id)
+        qbusiness_client.get_index(
+            applicationId=application_id,
+            indexId=index_id,
+        )
         print("    ✅ Index ID is valid")
 
         print("    🔐 Checking secret accessibility...")
@@ -305,7 +313,10 @@ def create_slack_secret(
     """
     # Initialize Secrets Manager client
     if region_name:
-        secrets_client = boto3.client("secretsmanager", region_name=region_name)
+        secrets_client = boto3.client(
+            "secretsmanager",
+            region_name=region_name,
+        )
     else:
         secrets_client = boto3.client("secretsmanager")
 
@@ -329,7 +340,9 @@ def create_slack_secret(
     except secrets_client.exceptions.ResourceExistsException:
         # Secret already exists, get its ARN
         print("🔐 ⚠️  Secret already exists - updating with new token...")
-        describe_response = secrets_client.describe_secret(SecretId=secret_name)
+        describe_response = secrets_client.describe_secret(
+            SecretId=secret_name,
+        )
         secret_arn = describe_response["ARN"]
 
         # Update the secret value
@@ -613,7 +626,9 @@ def setup_complete_slack_connector(
     print("\n📋 STEP 1/4: Creating AWS Secrets Manager secret...")
     print("-" * 50)
     secret_arn = create_slack_secret(
-        slack_token=slack_token, secret_name=secret_name, region_name=region_name
+        slack_token=slack_token,
+        secret_name=secret_name,
+        region_name=region_name,
     )
     result["secret_arn"] = secret_arn
 
