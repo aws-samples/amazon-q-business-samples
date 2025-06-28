@@ -95,15 +95,15 @@ Parameters:
     Description: 'Cron expression for sync schedule (optional)'
     Default: ''
     
-  RoleName:
+  KmsKeyId:
     Type: String
-    Description: 'Name for the IAM role (will be auto-generated if not provided)'
+    Description: 'KMS Key ID for encrypting the Secrets Manager secret (leave empty to use default AWS managed key)'
     Default: ''
 
 Conditions:
   HasSinceDate: !Not [!Equals [!Ref SinceDate, '']]
   HasSyncSchedule: !Not [!Equals [!Ref SyncSchedule, '']]
-  HasCustomRoleName: !Not [!Equals [!Ref RoleName, '']]
+  HasKmsKey: !Not [!Equals [!Ref KmsKeyId, '']]
 
 Resources:
   # AWS Secrets Manager Secret to store Slack token
@@ -112,6 +112,7 @@ Resources:
     Properties:
       Name: !Ref SecretName
       Description: 'Slack token for Amazon Q Business connector'
+      KmsKeyId: !If [HasKmsKey, !Ref KmsKeyId, !Ref 'AWS::NoValue']
       SecretString: !Sub |
         {
           "slackToken": "${SlackToken}"
@@ -126,10 +127,6 @@ Resources:
   SlackConnectorRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If 
-        - HasCustomRoleName
-        - !Ref RoleName
-        - !Sub 'AmazonQSlackConnectorRole-${DataSourceName}-${AWS::StackName}'
       Description: !Sub 'IAM role for Amazon Q Business Slack connector - Application ${ApplicationId}'
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
