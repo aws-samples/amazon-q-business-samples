@@ -18,7 +18,7 @@ Parameters:
     Type: String
     Description: 'Slack bot token (starts with xoxb- or xoxp-)'
     NoEcho: true
-    AllowedPattern: '^xox[bp]-[0-9]+-[0-9]+-[0-9]+-[a-zA-Z0-9]+'
+    AllowedPattern: '^xox[pb]-[0-9]+-[0-9]+-[0-9a-zA-Z]+(-[0-9a-zA-Z]+)?$'
     ConstraintDescription: 'Must be a valid Slack token starting with xoxb- or xoxp-'
   
   TeamId:
@@ -43,9 +43,9 @@ Parameters:
   
   SinceDate:
     Type: String
-    Description: 'ISO 8601 date string to crawl from (YYYY-MM-DD format). Leave empty for default (30 days ago)'
-    Default: ''
-    AllowedPattern: '^(|[0-9]{4}-[0-9]{2}-[0-9]{2})$'
+    Description: 'ISO 8601 date string to crawl from (YYYY-MM-DD format)'
+    AllowedPattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+    ConstraintDescription: 'Must be a valid date in YYYY-MM-DD format'
   
   ConversationTypes:
     Type: CommaDelimitedList
