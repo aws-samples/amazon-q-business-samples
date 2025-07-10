@@ -219,7 +219,7 @@ AMAZON_Q_URL=https://e4csgips.chat.qbusiness.us-east-1.on.aws/)
     flask run
     ```
 
-![Flask App](/qbusiness-features/web-experience-embedding-customization-guide/images/flask_app.png)
+![Flask App](/qbusiness-customization/web-experience-embedding-customization-guide/images/flask_app.png)
 
 Note the flask url in the terminal (for ex- http://127.0.0.1:5000/)
 
@@ -229,21 +229,21 @@ Note the flask url in the terminal (for ex- http://127.0.0.1:5000/)
     3. Click Add allowed Website
     4. Enter the flask URL you copied from step 8 and click Add.
 
-    ![Domain AllowList](/qbusiness-features/web-experience-embedding-customization-guide/images/domain_allowlist.png)
+    ![Domain AllowList](/qbusiness-customization/web-experience-embedding-customization-guide/images/domain_allowlist.png)
 
 10. Test the Q App embedded.
     1. open the flask app url in browser.
 
-    ![QChat App](/qbusiness-features/web-experience-embedding-customization-guide/images/qchat_app.png)
+    ![QChat App](/qbusiness-customization/web-experience-embedding-customization-guide/images/qchat_app.png)
 
     2. Click chat icon on right bottom.
     3. If prompted for Sign in to use the Q Assistant . Click on Sign in.
 
-    ![User SignIn](/qbusiness-features/web-experience-embedding-customization-guide/images/user_signin.png)
+    ![User SignIn](/qbusiness-customization/web-experience-embedding-customization-guide/images/user_signin.png)
 
     4. After Sign In , try out the embedded Q app with sample prompt.
 
-    ![QBusiness Embed App](/qbusiness-features/web-experience-embedding-customization-guide/images/qbusinessembed_app.png)
+    ![QBusiness Embed App](/qbusiness-customization/web-experience-embedding-customization-guide/images/qbusinessembed_app.png)
 
 ## License
 

@@ -84,7 +84,7 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
     2. Look for Object Ownership and click Edit.
     3. Select ACLx disabled option and click Save changes.
 
-    ![Disable ACLs](/qbusiness-features/web-experience-customization-guide/images/disable-acls.png)
+    ![Disable ACLs](/qbusiness-customization/web-experience-customization-guide/images/disable-acls.png)
 
 ### 3. UPLOAD ASSETS 
 1. Upload the following files to your S3 bucket:
@@ -153,7 +153,7 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
             
     2. Upload the theme.css file to S3 bucket.
 
-    ![Theme File](/qbusiness-features/web-experience-customization-guide/images/themefile.png)
+    ![Theme File](/qbusiness-customization/web-experience-customization-guide/images/themefile.png)
     
     ### 5. CONFIGURE AMAZON Q BUSINESS
     1. Open Amazon Q Business console.
@@ -163,14 +163,14 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
     5. Choose "Custom theming".
     6. Enter the S3 URL of your CSS file (https://YOUR-BUCKET-NAME.s3.YOUR-REGION.amazonaws.com/theme.css).
 
-    ![Custom Theming](/qbusiness-features/web-experience-customization-guide/images/custom-theming.png)
+    ![Custom Theming](/qbusiness-customization/web-experience-customization-guide/images/custom-theming.png)
 
     7. Save changes.
 
     ### 6. TEST THE CHANGES
     1. View the Web Experience URL that has now the customized branding.
 
-    ![Custom Branding](/qbusiness-features/web-experience-customization-guide/images/custom-branding.png)
+    ![Custom Branding](/qbusiness-customization/web-experience-customization-guide/images/custom-branding.png)
 
 ## License
 
