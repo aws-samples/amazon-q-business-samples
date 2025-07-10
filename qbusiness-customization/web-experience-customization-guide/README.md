@@ -17,7 +17,8 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
     1. Select the newly created bucket, Click on Permission tab.
     2. In the bucket policy replace the your-web-experinece-s3-object-arn and your-web-experinece-s3-object-arn/* with the bucket arn which you created.
     3. Replace your-webexperience-domain-without-https:// with your Amazon Q business Web Experience url (eg., “e4csgips.chat.qbusiness.us-east-1.on.aws”).
-        ```
+
+        ```json
         {
             "Version": "2012-10-17",
             "Statement": [
@@ -51,7 +52,7 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
 
     4. Here is the how the sample Policy for the bucket “qbusinesscsscustomize” should look like :-
 
-        ```
+        ```json
         {
             "Version": "2012-10-17",
             "Statement": [
@@ -148,7 +149,7 @@ This guide provides step-by-step instructions for customizing Amazon Q Business 
     For Example
     ```
         --qbusiness-webexperience-logo-url: "https://qbusinesscsscustomize.s3.us-east-1.amazon
-         --qbusiness-webexperience-favicon-url: "https://qbusinesscsscustomize.s3.us-east-1.ama
+        --qbusiness-webexperience-favicon-url: "https://qbusinesscsscustomize.s3.us-east-1.ama
     ```
             
     2. Upload the theme.css file to S3 bucket.
