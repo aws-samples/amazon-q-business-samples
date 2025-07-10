@@ -1,0 +1,68 @@
+[flake8]
+# Configuration for flake8 linting in Jupyter notebooks
+
+# Set line length to match Black's default
+max-line-length = 88
+
+# Ignore notebook-specific issues that are common and acceptable
+ignore = 
+    # E402: module level import not at top of file
+    # (Common in notebooks where imports are mixed with explanatory text)
+    E402,
+    
+    # F401: imported but unused
+    # (Notebooks often import libraries for later cells)
+    F401,
+    
+    # E501: line too long (handled by max-line-length setting above)
+    E501,
+    
+    # W503: line break before binary operator
+    # (Black formats this way, conflicts with W504)
+    W503,
+    
+    # E203: whitespace before ':'
+    # (Black formats this way for slicing)
+    E203,
+    
+    # F841: local variable assigned but never used
+    # (Common in notebooks for exploratory analysis)
+    F841,
+    
+    # E722: do not use bare except
+    # (Sometimes acceptable in notebooks for broad exception handling)
+    E722,
+    
+    # F821: undefined name (for JSON null values in notebook metadata)
+    F821
+
+# Exclude common directories
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .env,
+    build,
+    dist,
+    *.egg-info
+
+# Show source code for each error
+show-source = True
+
+# Show pep8 error codes
+show-pep8 = True
+
+# Count errors
+count = True
+
+# Enable specific error codes that are important
+select = 
+    # Syntax errors
+    E9,
+    # Runtime errors  
+    F63,
+    F7,
+    F82,
+    # Import errors
+    F4
