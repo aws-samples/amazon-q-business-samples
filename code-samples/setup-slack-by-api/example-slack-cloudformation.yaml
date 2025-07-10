@@ -1,0 +1,293 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Amazon Q Business Slack connector setup'
+
+Parameters:
+  ApplicationId:
+    Type: String
+    Description: 'Amazon Q Business Application ID'
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]{35}$'
+    ConstraintDescription: 'Must be a valid Amazon Q Business application ID'
+  
+  IndexId:
+    Type: String
+    Description: 'Amazon Q Business Index ID'
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]{35}$'
+    ConstraintDescription: 'Must be a valid Amazon Q Business index ID'
+  
+  SlackToken:
+    Type: String
+    Description: 'Slack bot token (starts with xoxb- or xoxp-)'
+    NoEcho: true
+    AllowedPattern: '^xox[pb]-[0-9]+-[0-9]+-[0-9a-zA-Z]+(-[0-9a-zA-Z]+)?$'
+    ConstraintDescription: 'Must be a valid Slack token starting with xoxb- or xoxp-'
+  
+  TeamId:
+    Type: String
+    Description: 'Slack team ID from your Slack workspace URL'
+    AllowedPattern: '^T[A-Z0-9]+$'
+    ConstraintDescription: 'Must be a valid Slack team ID starting with T'
+  
+  DataSourceName:
+    Type: String
+    Description: 'Name for the Slack data source'
+    Default: 'slack-data-source'
+    AllowedPattern: '^[a-zA-Z0-9/_+=.@-]+$'
+    MaxLength: 100
+  
+  SecretName:
+    Type: String
+    Description: 'Name for the AWS Secrets Manager secret'
+    Default: 'slack-connector-secret'
+    AllowedPattern: '^[a-zA-Z0-9/_+=.@-]+$'
+    MaxLength: 512
+  
+  SinceDate:
+    Type: String
+    Description: 'ISO 8601 date string to crawl from (YYYY-MM-DD format)'
+    AllowedPattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+    ConstraintDescription: 'Must be a valid date in YYYY-MM-DD format'
+  
+  ConversationTypes:
+    Type: CommaDelimitedList
+    Description: 'Types of conversations to crawl'
+    Default: 'PUBLIC_CHANNEL,PRIVATE_CHANNEL'
+    AllowedValues: 
+      - 'PUBLIC_CHANNEL'
+      - 'PRIVATE_CHANNEL'
+      - 'GROUP_MESSAGE'
+      - 'DIRECT_MESSAGE'
+  
+  CrawlBotMessages:
+    Type: String
+    Description: 'Whether to crawl bot messages'
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+  
+  ExcludeArchived:
+    Type: String
+    Description: 'Whether to exclude archived channels'
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  
+  MaxFileSizeMB:
+    Type: String
+    Description: 'Maximum file size to crawl in MB. Max is 50.'
+    Default: '50'
+    AllowedPattern: '^[0-9]+$'
+  
+  SyncMode:
+    Type: String
+    Description: 'Sync mode for the data source'
+    Default: 'FULL_CRAWL'
+    AllowedValues: 
+      - 'FULL_CRAWL'
+      - 'FORCED_FULL_CRAWL'
+      - 'CHANGE_LOG'
+  
+  IsCrawlAcl:
+    Type: String
+    Description: 'Whether to crawl access control information'
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  
+  SyncSchedule:
+    Type: String
+    Description: 'Cron expression for sync schedule (optional)'
+    Default: ''
+    
+  KmsKeyId:
+    Type: String
+    Description: 'KMS Key ID for encrypting the Secrets Manager secret (leave empty to use default AWS managed key)'
+    Default: ''
+
+Conditions:
+  HasSinceDate: !Not [!Equals [!Ref SinceDate, '']]
+  HasSyncSchedule: !Not [!Equals [!Ref SyncSchedule, '']]
+  HasKmsKey: !Not [!Equals [!Ref KmsKeyId, '']]
+
+Resources:
+  # AWS Secrets Manager Secret to store Slack token
+  SlackTokenSecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Ref SecretName
+      Description: 'Slack token for Amazon Q Business connector'
+      KmsKeyId: !If [HasKmsKey, !Ref KmsKeyId, !Ref 'AWS::NoValue']
+      SecretString: !Sub |
+        {
+          "slackToken": "${SlackToken}"
+        }
+      Tags:
+        - Key: 'Purpose'
+          Value: 'Amazon Q Business Slack Connector'
+        - Key: 'Application'
+          Value: !Ref ApplicationId
+
+  # IAM Role for Slack connector
+  SlackConnectorRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Description: !Sub 'IAM role for Amazon Q Business Slack connector - Application ${ApplicationId}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'AllowsAmazonQServicePrincipal'
+            Effect: 'Allow'
+            Principal:
+              Service: 'qbusiness.amazonaws.com'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'aws:SourceAccount': !Ref 'AWS::AccountId'
+              ArnEquals:
+                'aws:SourceArn': !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}'
+      Tags:
+        - Key: 'Purpose'
+          Value: 'Amazon Q Business Slack Connector'
+        - Key: 'Application'
+          Value: !Ref ApplicationId
+
+  # IAM Policy for Slack connector permissions
+  SlackConnectorPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: !Sub '${SlackConnectorRole}-SlackConnectorPolicy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'AllowsAmazonQToGetSecret'
+            Effect: 'Allow'
+            Action:
+              - 'secretsmanager:GetSecretValue'
+            Resource:
+              - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:*'
+          - Sid: 'AllowsAmazonQToDecryptSecret'
+            Effect: 'Allow'
+            Action:
+              - 'kms:Decrypt'
+            Resource:
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+            Condition:
+              StringLike:
+                'kms:ViaService':
+                  - !Sub 'secretsmanager.${AWS::Region}.amazonaws.com'
+          - Sid: 'AllowsAmazonQToIngestDocuments'
+            Effect: 'Allow'
+            Action:
+              - 'qbusiness:BatchPutDocument'
+              - 'qbusiness:BatchDeleteDocument'
+            Resource:
+              - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}'
+              - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}/index/*'
+          - Sid: 'AllowsAmazonQToIngestPrincipalMapping'
+            Effect: 'Allow'
+            Action:
+              - 'qbusiness:PutGroup'
+              - 'qbusiness:CreateUser'
+              - 'qbusiness:DeleteGroup'
+              - 'qbusiness:UpdateUser'
+              - 'qbusiness:ListGroups'
+            Resource:
+              - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}'
+              - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}/index/*'
+              - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}/index/*/data-source/*'
+      Roles:
+        - !Ref SlackConnectorRole
+
+  # Amazon Q Business Data Source for Slack
+  SlackDataSource:
+    Type: 'AWS::QBusiness::DataSource'
+    Properties:
+      ApplicationId: !Ref ApplicationId
+      IndexId: !Ref IndexId
+      DisplayName: !Ref DataSourceName
+      Description: !Sub 'Slack data source for team ${TeamId}'
+      RoleArn: !GetAtt SlackConnectorRole.Arn
+      SyncSchedule: !If [HasSyncSchedule, !Ref SyncSchedule, !Ref 'AWS::NoValue']
+      Configuration:
+        type: 'SLACK'
+        syncMode: !Ref SyncMode
+        secretArn: !Ref SlackTokenSecret
+        enableIdentityCrawler: false
+        identityLoggingStatus: 'DISABLED'
+        connectionConfiguration:
+          repositoryEndpointMetadata:
+            teamId: !Ref TeamId
+        repositoryConfigurations:
+          All:
+            fieldMappings:
+              - indexFieldName: '_authors'
+                indexFieldType: 'STRING_LIST'
+                dataSourceFieldName: 'authors'
+              - indexFieldName: '_source_uri'
+                indexFieldType: 'STRING'
+                dataSourceFieldName: 'url'
+              - indexFieldName: '_created_at'
+                indexFieldType: 'DATE'
+                dataSourceFieldName: 'created_at'
+                dateFieldFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'"
+              - indexFieldName: '_last_updated_at'
+                indexFieldType: 'DATE'
+                dataSourceFieldName: 'last_updated_at'
+                dateFieldFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        additionalProperties:
+          exclusionPatterns: []
+          inclusionPatterns: []
+          crawlBotMessages: !Ref CrawlBotMessages
+          excludeArchived: !Ref ExcludeArchived
+          channelFilter:
+            private_channel: []
+            public_channel: []
+          conversationType: !Ref ConversationTypes
+          sinceDate: !If 
+            - HasSinceDate
+            - !Ref SinceDate
+            - ''
+          isCrawlAcl: !Ref IsCrawlAcl
+          fieldForUserId: 'uuid'
+          channelIdFilter: []
+          includeSupportedFileType: false
+          maxFileSizeInMegaBytes: !Ref MaxFileSizeMB
+          enableDeletionProtection: false
+          deletionProtectionThreshold: '0'
+        version: '1.0.0'
+      Tags:
+        - Key: 'Purpose'
+          Value: 'Amazon Q Business Slack Connector'
+        - Key: 'Application'
+          Value: !Ref ApplicationId
+        - Key: 'TeamId'
+          Value: !Ref TeamId
+
+Outputs:
+  SecretArn:
+    Description: 'ARN of the created AWS Secrets Manager secret'
+    Value: !Ref SlackTokenSecret
+    Export:
+      Name: !Sub '${AWS::StackName}-SecretArn'
+
+  RoleArn:
+    Description: 'ARN of the created IAM role'
+    Value: !GetAtt SlackConnectorRole.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-RoleArn'
+
+  DataSourceId:
+    Description: 'ID of the created Slack data source'
+    Value: !GetAtt SlackDataSource.DataSourceId
+    Export:
+      Name: !Sub '${AWS::StackName}-DataSourceId'
+
+  DataSourceArn:
+    Description: 'ARN of the created Slack data source'
+    Value: !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}/index/${IndexId}/data-source/${SlackDataSource.DataSourceId}'
+    Export:
+      Name: !Sub '${AWS::StackName}-DataSourceArn'
+
+  SlackConnectorSetupComplete:
+    Description: 'Status message indicating successful setup'
+    Value: !Sub 'Slack connector successfully created for team ${TeamId} in application ${ApplicationId}'
+
+  NextSteps:
+    Description: 'Next steps after deployment'
+    Value: 'You can now start a sync job for your Slack data source in the Amazon Q Business console or via API' 
