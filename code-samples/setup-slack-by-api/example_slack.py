@@ -5,19 +5,22 @@ This module provides functions to create and configure a Slack connector
 for Amazon Q Business, including secret management, IAM role creation,
 and data source configuration.
 """
+# pylint: disable=line-too-long
+# flake8: noqa: E501
 
 import json
 import uuid
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 import boto3
 
 
 def validate_prerequisites(
-            application_id: str,
-            index_id: str,
-            secret_arn: str,
-        ) -> bool:
+    application_id: str,
+    index_id: str,
+    secret_arn: str,
+) -> bool:
     """
     Validate that the prerequisites exist before creating the data source.
 
@@ -63,7 +66,7 @@ def validate_prerequisites(
         return False
 
 
-def create_slack_connector(
+def create_slack_connector(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals,too-many-statements
     application_id: str,
     index_id: str,
     secret_arn: str,
@@ -148,9 +151,7 @@ def create_slack_connector(
         "secretArn": secret_arn,
         "enableIdentityCrawler": False,
         "identityLoggingStatus": "DISABLED",
-        "connectionConfiguration": {
-            "repositoryEndpointMetadata": {"teamId": team_id}
-        },
+        "connectionConfiguration": {"repositoryEndpointMetadata": {"teamId": team_id}},
         "repositoryConfigurations": {
             "All": {
                 "fieldMappings": [
@@ -256,7 +257,7 @@ def create_slack_connector(
         print(f"    📊 Data Source ID: {create_response['dataSourceId']}")
         print(f"    📝 Data Source Name: {data_source_name}")
         print(f"    🏢 Team ID: {team_id}")
-        since_date_value = configuration['additionalProperties']['sinceDate']
+        since_date_value = configuration["additionalProperties"]["sinceDate"]
         print(f"    📅 Since Date: {since_date_value}")
 
         return create_response
@@ -274,14 +275,12 @@ def create_slack_connector(
         if "InternalFailure" in str(e):
             print("🔍 Troubleshooting tips for InternalFailure:")
             print("    • Verify your Application ID and Index ID are correct")
-            print("    • Check if your AWS credentials have sufficient "
-                  "permissions")
-            print("    • Ensure the secret ARN is accessible from your "
-                  "AWS account")
-            print("    • Try again in a few minutes (could be temporary "
-                  "service issue)")
-            print("    • Check AWS Service Health Dashboard for any "
-                  "ongoing issues")
+            print("    • Check if your AWS credentials have sufficient permissions")
+            print("    • Ensure the secret ARN is accessible from your AWS account")
+            print(
+                "    • Try again in a few minutes (could be temporary service issue)"
+            )
+            print("    • Check AWS Service Health Dashboard for any ongoing issues")
 
         # Print configuration for debugging (without sensitive data)
         debug_config = configuration.copy()
@@ -290,6 +289,78 @@ def create_slack_connector(
         print(json.dumps(debug_config, indent=2))
 
         raise
+
+
+def wait_for_iam_role_propagation(
+    role_arn: str,
+    max_wait_time: int = 300,
+    initial_wait: int = 5,
+    max_backoff: int = 30,
+) -> bool:
+    """
+    Wait for IAM role to be properly propagated and accessible.
+
+    Uses exponential backoff to check if the role exists and can be assumed
+    by the Q Business service.
+
+    Args:
+        role_arn (str): The ARN of the IAM role to wait for
+        max_wait_time (int): Maximum time to wait in seconds (default: 300)
+        initial_wait (int): Initial wait time in seconds (default: 5)
+        max_backoff (int): Maximum backoff time in seconds (default: 30)
+
+    Returns:
+        bool: True if role is accessible, False if timeout reached
+    """
+    print(f"⏳ Waiting for IAM role propagation: {role_arn}")
+
+    iam_client = boto3.client("iam")
+    role_name = role_arn.split("/")[-1]
+
+    start_time = time.time()
+    wait_time = initial_wait
+    attempt = 1
+
+    while time.time() - start_time < max_wait_time:
+        try:
+            # Check if role exists and is accessible
+            response = iam_client.get_role(RoleName=role_name)
+
+            # Verify the role has the correct trust policy
+            trust_policy = response["Role"]["AssumeRolePolicyDocument"]
+
+            # Check if qbusiness.amazonaws.com is in the trust policy
+            if isinstance(trust_policy, str):
+                trust_policy = json.loads(trust_policy)
+
+            for statement in trust_policy.get("Statement", []):
+                principal = statement.get("Principal", {})
+                if (
+                    isinstance(principal, dict)
+                    and principal.get("Service") == "qbusiness.amazonaws.com"
+                ):
+                    print(
+                        f"✅ IAM role is accessible after {attempt} attempts "
+                        f"({time.time() - start_time:.1f}s)"
+                    )
+                    return True
+
+            print("⚠️  Role exists but trust policy may be incomplete")
+
+        except iam_client.exceptions.NoSuchEntityException:
+            print(
+                f"⏳ Attempt {attempt}: Role not yet available, waiting {wait_time}s..."
+            )
+        except (iam_client.exceptions.AccessDeniedException,
+                iam_client.exceptions.ServiceFailureException) as e:
+            print(f"⚠️  Attempt {attempt}: Error checking role: {str(e)}")
+
+        time.sleep(wait_time)
+        attempt += 1
+        wait_time = min(wait_time * 2, max_backoff)
+
+    print(f"❌ Timeout waiting for IAM role propagation after {max_wait_time}s")
+    return False
 
 
 def create_slack_secret(
@@ -363,7 +434,7 @@ def create_slack_secret(
         raise
 
 
-def create_iam_role_for_slack_connector(
+def create_iam_role_for_slack_connector(  # pylint: disable=too-many-locals
     role_name: str,
     application_id: str,
     region_name: Optional[str] = None,
@@ -404,8 +475,7 @@ def create_iam_role_for_slack_connector(
 
     # Trust policy for Amazon Q Business service
     source_arn = (
-        f"arn:aws:qbusiness:{region_name}:{account_id}:"
-        f"application/{application_id}"
+        f"arn:aws:qbusiness:{region_name}:{account_id}:" f"application/{application_id}"
     )
     trust_policy = {
         "Version": "2012-10-17",
@@ -424,13 +494,10 @@ def create_iam_role_for_slack_connector(
     }
 
     # Permissions policy for the Slack connector
-    secret_resource = (
-        f"arn:aws:secretsmanager:{region_name}:{account_id}:secret:*"
-    )
+    secret_resource = f"arn:aws:secretsmanager:{region_name}:{account_id}:secret:*"
     kms_resource = f"arn:aws:kms:{region_name}:{account_id}:key/*"
     qbusiness_app_resource = (
-        f"arn:aws:qbusiness:{region_name}:{account_id}:"
-        f"application/{application_id}"
+        f"arn:aws:qbusiness:{region_name}:{account_id}:" f"application/{application_id}"
     )
     qbusiness_index_resource = (
         f"arn:aws:qbusiness:{region_name}:{account_id}:"
@@ -511,9 +578,7 @@ def create_iam_role_for_slack_connector(
 
         # Create and attach the permissions policy
         policy_name = f"{role_name}-SlackConnectorPolicy"
-        policy_description = (
-            "Permissions policy for Amazon Q Business Slack connector"
-        )
+        policy_description = "Permissions policy for Amazon Q Business Slack connector"
         policy_result = iam_client.create_policy(
             PolicyName=policy_name,
             PolicyDocument=json.dumps(permissions_policy),
@@ -548,7 +613,7 @@ def create_iam_role_for_slack_connector(
         raise
 
 
-def setup_complete_slack_connector(
+def setup_complete_slack_connector(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
     application_id: str,
     index_id: str,
     slack_token: str,
@@ -646,6 +711,15 @@ def setup_complete_slack_connector(
             region_name=region_name,
         )
         result["role_arn"] = role_arn
+
+        # Wait for IAM role propagation
+        print("\n⏳ Waiting for IAM role propagation...")
+        if not wait_for_iam_role_propagation(
+            role_arn, max_wait_time=180, initial_wait=10
+        ):
+            print("⚠️  IAM role propagation taking longer than expected.")
+            print("    Adding additional wait time for AWS service propagation...")
+            time.sleep(30)  # Additional wait for AWS service propagation
     else:
         print("\n📋 STEP 2/4: Using provided IAM role...")
         print("-" * 50)
@@ -655,6 +729,10 @@ def setup_complete_slack_connector(
     # Step 3: Validate prerequisites and create the Slack connector
     print("\n📋 STEP 3/4: Creating Slack data source...")
     print("-" * 50)
+
+    # Additional wait to ensure role is fully propagated across all AWS services
+    print("⏳ Ensuring IAM role is fully propagated across AWS services...")
+    time.sleep(15)
 
     # Validate prerequisites first
     if not validate_prerequisites(application_id, index_id, secret_arn):
