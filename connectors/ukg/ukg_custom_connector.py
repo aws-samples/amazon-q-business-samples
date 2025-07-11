@@ -1,10 +1,12 @@
-import boto3
-import requests
+"""UKG Connector for fetching and syncing knowledge base articles."""
 import json
+import logging
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, List
-import logging
 from urllib.parse import urljoin
+
+import boto3
+import requests
 
 # Configuration
 SECRET_NAME = 'ukg-crawler-secrets'
@@ -60,91 +62,91 @@ def get_secret(secret_name: str) -> Dict[str, str]:
         response = client.get_secret_value(SecretId=secret_name)
         if 'SecretString' in response:
             return json.loads(response['SecretString'])
-        else:
-            raise ValueError("Secret value is not a string")
+        raise ValueError("Secret value is not a string")
     except Exception as e:
-        logger.error(f"Error retrieving secret {secret_name}: {e}")
+        logger.error("Error retrieving secret %s: %s", secret_name, e)
         raise
 
 
 class UKGCrawler:
-    def __init__(self, application_id: str, application_secret: str,
-                 client_id: str, base_url: str, s3_bucket: str):
+    """UKG API crawler for fetching and processing knowledge base articles."""
+
+    def __init__(self, config: Dict[str, str]):
         """
-        Initialize the UKG crawler with OAuth credentials.
+        Initialize the UKG crawler with configuration.
 
         Args:
-            application_id: UKG application ID
-            application_secret: UKG application secret
-            client_id: UKG client ID
-            base_url: Base URL for UKG API
-            s3_bucket: S3 bucket name for storing articles
+            config: Dictionary containing UKG and AWS configuration
         """
-        self.application_id = application_id
-        self.application_secret = application_secret
-        self.client_id = client_id
-        self.base_url = base_url
-        self.s3_bucket = s3_bucket
-        self.s3_client = boto3.client('s3')
-        self.q_business_client = boto3.client('qbusiness')
-        self.access_token = None
-        self.token_expiry = None
+        self.config = config
+        self.clients = {
+            's3': boto3.client('s3'),
+            'qbusiness': boto3.client('qbusiness')
+        }
+        self.auth = {'token': None, 'expiry': None}
 
     def _get_oauth_token(self) -> Optional[str]:
         """Get OAuth access token using client credentials flow."""
         try:
             # Token endpoint URL
-            token_url = urljoin(self.base_url, '/api/v2/client/tokens')
+            token_url = urljoin(
+                self.config['base_url'], '/api/v2/client/tokens'
+            )
 
             # Prepare the request data
             data = {
                 'grant_type': 'client_credentials',
                 'scope': 'client',
-                'client_id': self.client_id
+                'client_id': self.config['client_id']
             }
 
             # Make the token request with Basic Auth
             response = requests.post(
                 token_url,
                 data=data,
-                auth=(self.application_id, self.application_secret),
+                auth=(
+                    self.config['application_id'],
+                    self.config['application_secret']
+                ),
                 headers={
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
-                }
+                },
+                timeout=30
             )
             response.raise_for_status()
 
             # Parse the response
             token_data = response.json()
-            self.access_token = token_data['access_token']
+            self.auth['token'] = token_data['access_token']
 
             # Set token expiry (expires_in is in seconds)
             expires_in = token_data.get('expires_in', 3600)
-            self.token_expiry = datetime.now() + timedelta(
+            self.auth['expiry'] = datetime.now() + timedelta(
                 seconds=expires_in - 60
             )
 
             logger.info("Successfully obtained new OAuth token")
-            return self.access_token
+            return self.auth['token']
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error getting OAuth token: {e}")
+            logger.error("Error getting OAuth token: %s", e)
             if hasattr(e, 'response') and e.response is not None:
-                logger.error(f"Response status: {e.response.status_code}")
-                logger.error(f"Response body: {e.response.text}")
+                logger.error("Response status: %s", e.response.status_code)
+                logger.error("Response body: %s", e.response.text)
             return None
 
     def _get_headers(self) -> Dict[str, str]:
         """Get headers for API requests with OAuth token."""
         # Check if token is expired or about to expire
-        if (not self.access_token or
-                (self.token_expiry and datetime.now() >= self.token_expiry)):
+        if (not self.auth['token'] or (
+                self.auth['expiry'] and datetime.now() >= self.auth['expiry']
+        )):
             if not self._get_oauth_token():
-                raise Exception("Failed to obtain valid OAuth token")
+                raise RuntimeError("Failed to obtain valid OAuth token")
 
         return {
-            'Authorization': f'Bearer {self.access_token}',
+            'Authorization': f'Bearer {self.auth["token"]}',
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
@@ -157,14 +159,17 @@ class UKGCrawler:
         while True:
             try:
                 # Prepare URL with cursor parameter if available
-                url = urljoin(self.base_url, '/api/v2/client/kb_articles')
+                url = urljoin(
+                    self.config['base_url'], '/api/v2/client/kb_articles'
+                )
                 if cursor:
                     url = f"{url}?cursor={cursor}"
 
-                logger.info(f"Fetching articles from URL: {url}")
+                logger.info("Fetching articles from URL: %s", url)
                 response = requests.get(
                     url,
-                    headers=self._get_headers()
+                    headers=self._get_headers(),
+                    timeout=30
                 )
                 response.raise_for_status()
 
@@ -172,26 +177,26 @@ class UKGCrawler:
                 articles = response.json()
                 all_articles.extend(articles)
                 logger.info(
-                    f"Fetched {len(articles)} articles on this page"
+                    "Fetched %d articles on this page", len(articles)
                 )
 
                 # Get next cursor from header
                 next_cursor = response.headers.get('Next-Cursor')
                 if next_cursor:
-                    logger.info(f"Found next cursor: {next_cursor}")
+                    logger.info("Found next cursor: %s", next_cursor)
                     cursor = next_cursor
                 else:
                     logger.info("No more pages to fetch")
                     break
 
             except requests.exceptions.RequestException as e:
-                logger.error(f"Error fetching articles: {e}")
+                logger.error("Error fetching articles: %s", e)
                 if hasattr(e, 'response') and e.response is not None:
-                    logger.error(f"Response status: {e.response.status_code}")
-                    logger.error(f"Response body: {e.response.text}")
+                    logger.error("Response status: %s", e.response.status_code)
+                    logger.error("Response body: %s", e.response.text)
                 break
 
-        logger.info(f"Fetched {len(all_articles)} total articles")
+        logger.info("Fetched %d total articles", len(all_articles))
         return all_articles
 
     def _get_article_content(self, article_id: str) -> \
@@ -201,16 +206,19 @@ class UKGCrawler:
         """
         try:
             url = urljoin(
-                self.base_url, f'/api/v2/client/kb_articles/{article_id}'
+                self.config['base_url'],
+                f'/api/v2/client/kb_articles/{article_id}'
             )
-            response = requests.get(url, headers=self._get_headers())
+            response = requests.get(
+                url, headers=self._get_headers(), timeout=30
+            )
             response.raise_for_status()
             article_data = response.json()
 
             # Get the versions list
             versions = article_data.get('versions', [])
             if not versions:
-                logger.warning(f"No versions found for article {article_id}")
+                logger.warning("No versions found for article %s", article_id)
                 return None
 
             # Find the latest version based on updated_at
@@ -219,7 +227,7 @@ class UKGCrawler:
                     return datetime.fromisoformat(
                         dt_str.replace('Z', '+00:00')
                     )
-                except Exception:
+                except ValueError:
                     return datetime.fromisoformat(
                         '1970-01-01T00:00:00+00:00'
                     )
@@ -234,18 +242,20 @@ class UKGCrawler:
 
         except requests.exceptions.RequestException as e:
             logger.error(
-                f"Error fetching article content for ID {article_id}: {e}"
+                "Error fetching article content for ID %s: %s", article_id, e
             )
             if hasattr(e, 'response') and e.response is not None:
-                logger.error(f"Response status: {e.response.status_code}")
-                logger.error(f"Response body: {e.response.text}")
+                logger.error("Response status: %s", e.response.status_code)
+                logger.error("Response body: %s", e.response.text)
             return None
 
     def _create_metadata(self, article: Dict[str, Any],
                          article_content: Dict[str, Any]) -> Dict[str, Any]:
         """Create metadata for Amazon Q Business ingestion."""
         article_id = article.get("id", "")
-        source_uri = urljoin(self.base_url, f"/articles/{article_id}")
+        source_uri = urljoin(
+            self.config['base_url'], f"/articles/{article_id}"
+        )
 
         # Get timestamps from the latest version
         created_at = article_content.get('created_at', '')
@@ -267,14 +277,14 @@ class UKGCrawler:
     def _upload_to_s3(self, content: str, key: str) -> bool:
         """Upload content to S3."""
         try:
-            self.s3_client.put_object(
-                Bucket=self.s3_bucket,
+            self.clients['s3'].put_object(
+                Bucket=self.config['s3_bucket'],
                 Key=key,
                 Body=json.dumps(content)
             )
             return True
-        except Exception as e:
-            logger.error(f"Error uploading to S3: {e}")
+        except (boto3.exceptions.Boto3Error, ValueError) as e:
+            logger.error("Error uploading to S3: %s", e)
             return False
 
     def process_articles(self):
@@ -298,8 +308,8 @@ class UKGCrawler:
             article_content = self._get_article_content(article_id)
             if not article_content:
                 logger.warning(
-                    f"Failed to fetch content for article {article_id}, "
-                    "skipping"
+                    "Failed to fetch content for article %s, skipping",
+                    article_id
                 )
                 continue
 
@@ -319,13 +329,14 @@ class UKGCrawler:
 
             successful_count += 1
             logger.info(
-                f"Successfully processed article: {article_id} "
-                f"({successful_count}/{len(articles)})"
+                "Successfully processed article: %s (%d/%d)",
+                article_id, successful_count, len(articles)
             )
 
         logger.info(
-            f"Processing complete. Successfully processed "
-            f"{successful_count} out of {len(articles)} articles."
+            """Processing complete. Successfully processed \
+                %d out of %d articles.""",
+            successful_count, len(articles)
         )
 
     def _list_s3_articles(self) -> List[Dict[str, str]]:
@@ -336,10 +347,11 @@ class UKGCrawler:
             List of dictionaries containing content and metadata file keys
         """
         articles = []
-        paginator = self.s3_client.get_paginator('list_objects_v2')
+        paginator = self.clients['s3'].get_paginator('list_objects_v2')
 
         for page in paginator.paginate(
-            Bucket=self.s3_bucket, Prefix='articles/'
+            Bucket=self.config['s3_bucket'],
+            Prefix='articles/'
         ):
             if 'Contents' not in page:
                 continue
@@ -350,16 +362,16 @@ class UKGCrawler:
                     # Found content file, look for corresponding metadata
                     metadata_key = f"{key}.metadata.json"
                     try:
-                        self.s3_client.head_object(
-                            Bucket=self.s3_bucket, Key=metadata_key
+                        self.clients['s3'].head_object(
+                            Bucket=self.config['s3_bucket'], Key=metadata_key
                         )
                         articles.append({
                             'content_key': key,
                             'metadata_key': metadata_key
                         })
-                    except self.s3_client.exceptions.ClientError:
+                    except self.clients['s3'].exceptions.ClientError:
                         logger.warning(
-                            f"No metadata found for {key}, skipping"
+                            "No metadata found for %s, skipping", key
                         )
                         continue
 
@@ -376,12 +388,12 @@ class UKGCrawler:
             Object content as string, or None if error
         """
         try:
-            response = self.s3_client.get_object(
-                Bucket=self.s3_bucket, Key=key
+            response = self.clients['s3'].get_object(
+                Bucket=self.config['s3_bucket'], Key=key
             )
             return response['Body'].read().decode('utf-8')
-        except Exception as e:
-            logger.error(f"Error reading S3 object {key}: {e}")
+        except (boto3.exceptions.Boto3Error, UnicodeDecodeError) as e:
+            logger.error("Error reading S3 object %s: %s", key, e)
             return None
 
     def sync_with_q_business(self, application_id: str, index_id: str):
@@ -394,7 +406,7 @@ class UKGCrawler:
         """
         articles = self._list_s3_articles()
         logger.info(
-            f"Found {len(articles)} articles to sync with Q Business"
+            "Found %d articles to sync with Q Business", len(articles)
         )
 
         for article in articles:
@@ -409,8 +421,8 @@ class UKGCrawler:
 
                 if not content or not metadata_json:
                     logger.warning(
-                        f"Missing content or metadata for "
-                        f"{article['content_key']}, skipping"
+                        "Missing content or metadata for %s, skipping",
+                        article['content_key']
                     )
                     continue
 
@@ -428,21 +440,21 @@ class UKGCrawler:
                 }
 
                 # Upload to Q Business
-                self.q_business_client.batch_put_document(
+                self.clients['qbusiness'].batch_put_document(
                     applicationId=application_id,
                     indexId=index_id,
                     documents=[document]
                 )
 
                 logger.info(
-                    f"Successfully synced article "
-                    f"{document['documentId']} to Q Business"
+                    "Successfully synced article %s to Q Business",
+                    document['documentId']
                 )
 
-            except Exception as e:
+            except (boto3.exceptions.Boto3Error, json.JSONDecodeError) as e:
                 logger.error(
-                    f"Error syncing article {article['content_key']} "
-                    f"to Q Business: {e}"
+                    "Error syncing article %s to Q Business: %s",
+                    article['content_key'], e
                 )
                 continue
 
@@ -450,39 +462,41 @@ class UKGCrawler:
 
 
 def main():
+    """Main function to run the UKG connector."""
     # Get secrets from Secrets Manager
     try:
         secrets = get_secret(SECRET_NAME)
 
-        APPLICATION_ID = secrets['UKG_APPLICATION_ID']
-        APPLICATION_SECRET = secrets['UKG_APPLICATION_SECRET']
-        CLIENT_ID = secrets['UKG_CLIENT_ID']
-        BASE_URL = secrets['UKG_BASE_URL']
-        S3_BUCKET = secrets['S3_BUCKET_NAME']
-        Q_BUSINESS_APP_ID = secrets['Q_BUSINESS_APP_ID']
-        Q_BUSINESS_INDEX_ID = secrets['Q_BUSINESS_INDEX_ID']
+        application_id = secrets['UKG_APPLICATION_ID']
+        application_secret = secrets['UKG_APPLICATION_SECRET']
+        client_id = secrets['UKG_CLIENT_ID']
+        base_url = secrets['UKG_BASE_URL']
+        s3_bucket = secrets['S3_BUCKET_NAME']
+        q_business_app_id = secrets['Q_BUSINESS_APP_ID']
+        q_business_index_id = secrets['Q_BUSINESS_INDEX_ID']
 
-        if not all([APPLICATION_ID, APPLICATION_SECRET, CLIENT_ID,
-                   BASE_URL, S3_BUCKET, Q_BUSINESS_APP_ID,
-                   Q_BUSINESS_INDEX_ID]):
+        if not all([application_id, application_secret, client_id,
+                   base_url, s3_bucket, q_business_app_id,
+                   q_business_index_id]):
             logger.error("Missing required secret values")
             return
 
-        crawler = UKGCrawler(
-            application_id=APPLICATION_ID,
-            application_secret=APPLICATION_SECRET,
-            client_id=CLIENT_ID,
-            base_url=BASE_URL,
-            s3_bucket=S3_BUCKET
-        )
+        config = {
+            'application_id': application_id,
+            'application_secret': application_secret,
+            'client_id': client_id,
+            'base_url': base_url,
+            's3_bucket': s3_bucket
+        }
+        crawler = UKGCrawler(config)
 
         # Process articles and sync with Q Business
         crawler.process_articles()
-        crawler.sync_with_q_business(Q_BUSINESS_APP_ID, Q_BUSINESS_INDEX_ID)
+        crawler.sync_with_q_business(q_business_app_id, q_business_index_id)
 
-    except Exception as e:
+    except (KeyError, ValueError, RuntimeError) as e:
         logger.error(
-            f"Failed to initialize crawler while trying to seed secrets: {e}"
+            "Failed to initialize crawler while trying to seed secrets: %s", e
         )
         return
 

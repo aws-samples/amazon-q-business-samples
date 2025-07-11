@@ -1,6 +1,10 @@
 # UKG Connector
 
-A Python-based connector for integrating with UKG's API, designed to fetch and process knowledge base articles and sync them with Amazon Q Business for enhanced search capabilities.
+A Python-based connector for integrating with [UKG's](https://www.ukg.com/) API, designed to fetch and process knowledge base articles and sync them with Amazon Q Business for enhanced search capabilities.
+
+## About UKG
+
+UKG (Ultimate Kronos Group) is a leading provider of HR, payroll, and workforce management solutions. Formed through the merger of Ultimate Software and Kronos, UKG serves organizations of all sizes with cloud-based human capital management (HCM) solutions that help businesses manage their people, payroll, and workplace operations more effectively.
 
 For questions reach out to Art Chan <chanart@amazon.com>
 
