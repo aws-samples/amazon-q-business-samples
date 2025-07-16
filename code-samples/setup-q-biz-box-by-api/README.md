@@ -1,4 +1,4 @@
-# Q-Biz Box Connector
+# Amazon Q Business Box Connector
 
 An end-to-end primer for creating and managing Amazon Q Business applications using the AWS SDK (boto3). This project demonstrates how to programmatically set up and manage Amazon Q Business with Box data sources, offering greater control and automation capabilities compared to the console experience.
 
