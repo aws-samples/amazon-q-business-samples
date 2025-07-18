@@ -1,0 +1,367 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'DynamoDB Plugin API for Amazon Q Business'
+
+# MIT No Attribution
+#
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - test
+      - prod
+    Description: Environment name
+  
+  QBusinessAppName:
+    Type: String
+    Description: Name of the Amazon Q Business application
+    Default: Q-Insurance-Comp-Analyzer
+
+  ApiStageName:
+    Type: String
+    Default: prod
+    Description: API Gateway stage name
+
+Resources:
+  # DynamoDB Table with GSIs
+  PolicyDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'policy-data-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: policy_id
+          AttributeType: S
+        - AttributeName: state
+          AttributeType: S
+        - AttributeName: policy_status
+          AttributeType: S
+      KeySchema:
+        - AttributeName: policy_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: StateIndex
+          KeySchema:
+            - AttributeName: state
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: PolicyStatusIndex
+          KeySchema:
+            - AttributeName: policy_status
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Lambda Function
+  DynamoDBHandlerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'DynamoDBHandler-${Environment}'
+      Runtime: python3.9
+      Handler: lambda.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref PolicyDataTable
+          AWS_REGION: !Ref AWS::Region
+          REQUIRE_API_KEY: 'false'
+          DLQ_ARN: !GetAtt LambdaDeadLetterQueue.Arn
+      Code:
+        ZipFile: |
+          # This is a placeholder. The actual code is in lambda.py
+          def lambda_handler(event, context):
+              return {
+                  'statusCode': 200,
+                  'body': '{"message": "Please deploy the actual lambda.py code"}'
+              }
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Dead Letter Queue for Lambda
+  LambdaDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub 'DynamoDBHandler-DLQ-${Environment}'
+      MessageRetentionPeriod: 1209600  # 14 days
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'DynamoDBPlugin-Lambda-ExecutionRole-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: 
+                  - !GetAtt PolicyDataTable.Arn
+                  - !Sub '${PolicyDataTable.Arn}/index/*'
+        - PolicyName: SQSAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt LambdaDeadLetterQueue.Arn
+        - PolicyName: LambdaUpdateConfig
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:UpdateFunctionConfiguration
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:DynamoDBHandler-${Environment}'
+
+  # API Gateway
+  DynamoDBPluginAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'DynamoDBPluginAPI-${Environment}'
+      Description: 'API for DynamoDB Plugin for Amazon Q Business'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  # API Gateway Resources
+  ApiItemsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ParentId: !GetAtt DynamoDBPluginAPI.RootResourceId
+      PathPart: 'items'
+
+  ApiItemResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ParentId: !Ref ApiItemsResource
+      PathPart: '{policy_id}'
+
+  ApiSearchResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ParentId: !Ref ApiItemsResource
+      PathPart: 'search'
+
+  ApiStatsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ParentId: !Ref ApiItemsResource
+      PathPart: 'stats'
+
+  # API Gateway Methods
+  ApiRootGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !GetAtt DynamoDBPluginAPI.RootResourceId
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiItemsGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiItemsResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiItemsPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiItemsResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiItemGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiItemResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiItemPutMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiItemResource
+      HttpMethod: PUT
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiItemDeleteMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiItemResource
+      HttpMethod: DELETE
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiSearchPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiSearchResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  ApiStatsGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      ResourceId: !Ref ApiStatsResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBHandlerFunction.Arn}/invocations'
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiRootGetMethod
+      - ApiItemsGetMethod
+      - ApiItemsPostMethod
+      - ApiItemGetMethod
+      - ApiItemPutMethod
+      - ApiItemDeleteMethod
+      - ApiSearchPostMethod
+      - ApiStatsGetMethod
+    Properties:
+      RestApiId: !Ref DynamoDBPluginAPI
+      StageName: !Ref ApiStageName
+
+  # Lambda Permission for API Gateway
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DynamoDBHandlerFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${DynamoDBPluginAPI}/*/*/*'
+
+  # Q Business Service Role
+  QBusinessServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${QBusinessAppName}-ServiceRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: qbusiness.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonQFullAccess
+      Policies:
+        - PolicyName: ApiGatewayAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - execute-api:Invoke
+                Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${DynamoDBPluginAPI}/${ApiStageName}/*'
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${DynamoDBPluginAPI}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}'
+  
+  TableName:
+    Description: DynamoDB table name
+    Value: !Ref PolicyDataTable
+  
+  LambdaFunction:
+    Description: Lambda function name
+    Value: !Ref DynamoDBHandlerFunction
+  
+  QBusinessServiceRole:
+    Description: Q Business service role ARN
+    Value: !GetAtt QBusinessServiceRole.Arn
