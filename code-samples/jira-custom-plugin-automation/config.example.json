@@ -1,0 +1,23 @@
+{
+    "jiraBaseUrl": "https://your-domain.atlassian.net",
+    "atlassianSiteId": "your-atlassian-site-id",
+    "qBusinessApplicationId": "your-existing-qbusiness-app-id",
+    "jiraApiKeySecretName": "jira-api-key",
+    "pluginVersion": "1.0.0",
+    "enableBuiltInJiraPlugin": true,
+    "enableQBusinessIndex": false,
+    "flexibleIssueTypes": ["Bug", "Story", "Task"],
+    "metadataProject": "SAMPLE",
+    "projects": [
+        {
+            "key": "WEBAPP",
+            "name": "Web Application",
+            "issueTypes": ["Bug", "Story", "Task"]
+        },
+        {
+            "key": "API",
+            "name": "API Services",
+            "issueTypes": ["Bug", "Epic"]
+        }
+    ]
+}

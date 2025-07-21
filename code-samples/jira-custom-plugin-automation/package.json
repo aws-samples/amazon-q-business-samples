@@ -1,0 +1,82 @@
+{
+    "name": "amazon-q-business-jira-plugin-sample",
+    "version": "0.1.0",
+    "description": "AWS CDK sample that integrates Amazon Q Business with Jira for natural language issue creation and automated plugin management",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aws-samples/amazon-q-business-samples.git",
+        "directory": "code-samples/jira-custom-plugin-automation"
+    },
+    "keywords": [
+        "aws",
+        "amazon-q-business",
+        "jira",
+        "cdk",
+        "sample",
+        "automation",
+        "plugin",
+        "openapi",
+        "custom-resource",
+        "lambda"
+    ],
+    "author": "AWS",
+    "license": "MIT-0",
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    },
+    "bin": {
+        "amazon-q-business-jira-plugin-sample": "bin/custom_plugin_jira.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "jest",
+        "cdk": "cdk",
+        "dev": "npx ts-node scripts/dev-tools.ts",
+        "validate": "npx ts-node scripts/dev-tools.ts validate",
+        "test-local": "LOCAL_TEST_MODE=true npx ts-node scripts/dev-tools.ts test",
+        "validate-keys": "npx ts-node scripts/dev-tools.ts validate-keys",
+        "generate-specs": "npx ts-node scripts/dev-tools.ts generate-specs",
+        "deploy": "./deploy.sh",
+        "lint": "eslint . --ext .ts,.js",
+        "lint:fix": "eslint . --ext .ts,.js --fix",
+        "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+        "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
+        "type-check": "tsc --noEmit",
+        "quality": "npm run lint && npm run format:check && npm run type-check",
+        "quality:fix": "npm run lint:fix && npm run format",
+        "security:audit": "npm audit",
+        "security:fix": "npm audit fix",
+        "security:check": "npm audit --audit-level moderate",
+        "pre-deploy": "npm run quality && npm run validate && npm run security:check",
+        "clean": "rm -rf cdk.out cdk-out-deploy local-lambda-output *.js *.d.ts *.js.map",
+        "fresh-install": "npm run clean && rm -rf node_modules package-lock.json && npm install"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.150",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^22.7.9",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "aws-cdk": "^2.1020.2",
+        "esbuild": "^0.25.6",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^5.5.1",
+        "eslint-plugin-security": "^3.0.1",
+        "jest": "^29.7.0",
+        "prettier": "^3.6.2",
+        "ts-jest": "^29.4.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.3"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.844.0",
+        "@aws-sdk/client-secrets-manager": "^3.844.0",
+        "aws-cdk-lib": "^2.204.0",
+        "axios": "^1.10.0",
+        "constructs": "^10.4.2"
+    }
+}
