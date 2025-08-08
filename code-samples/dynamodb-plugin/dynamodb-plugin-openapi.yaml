@@ -1,0 +1,746 @@
+openapi: 3.0.1
+# MIT No Attribution
+#
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+info:
+  title: DynamoDB Plugin API
+  description: API for managing insurance policy data stored in DynamoDB
+  version: 1.0.0
+servers:
+  - url: https://prod-api-gateway-endpoint.execute-api.us-east-1.amazonaws.com/prod
+    description: Production API Gateway endpoint
+paths:
+  /:
+    get:
+      description: "Root endpoint providing API information"
+      operationId: getApiInfo
+      summary: Get API information
+      responses:
+        '200':
+          description: API information and status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  version:
+                    type: string
+                  endpoints:
+                    type: array
+                    items:
+                      type: string
+  /items:
+    get:
+      description: "Retrieves insurance policy items from the DynamoDB table with optional filtering"
+      operationId: listItems
+      summary: Retrieve insurance policies from DynamoDB with filtering options
+      parameters:
+        # State-based filtering
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [California, Illinois]
+          description: Filter policies by state
+          example: Illinois
+        
+        # Policy status filtering
+        - name: policy_status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Active, Lapsed, Cancelled]
+          description: Filter policies by current status
+          example: Active
+        
+        # Policy type filtering
+        - name: policy_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Liability, Collision, Comprehensive, "Full Coverage"]
+          description: Filter policies by insurance type
+          example: "Full Coverage"
+        
+        # Vehicle type filtering
+        - name: vehicle_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Motorcycle, SUV, Sedan, Truck]
+          description: Filter policies by vehicle type
+          example: SUV
+        
+        # Risk rating filtering
+        - name: risk_rating
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Low, Medium, High]
+          description: Filter policies by risk assessment rating
+          example: Medium
+        
+        # Deductible filtering
+        - name: deductible
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by exact deductible amount (supports various formats like "250", "$250", "$1,000")
+          example: "$250"
+        
+        # Premium range filtering
+        - name: premium_min
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 0
+          description: Filter policies with premium amount greater than or equal to this value
+          example: 1000
+        
+        - name: premium_max
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 0
+          description: Filter policies with premium amount less than or equal to this value
+          example: 2000
+        
+        # Date range filtering
+        - name: start_date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter policies that start on or after this date
+          example: "2024-01-01"
+        
+        - name: start_date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter policies that start on or before this date
+          example: "2024-12-31"
+        
+        - name: end_date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter policies that end on or after this date
+          example: "2025-01-01"
+        
+        - name: end_date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter policies that end on or before this date
+          example: "2025-12-31"
+        
+        # Compliance filtering
+        - name: is_compliant
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [TRUE, FALSE]
+          description: Filter policies by compliance status
+          example: TRUE
+        
+        # Agent filtering
+        - name: agent_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Filter policies by specific insurance agent ID
+          example: "fda3f94b-92a6-4b40-9d23-e0feb87a2f73"
+        
+        # Customer filtering
+        - name: customer_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Filter policies by specific customer ID
+          example: "ece98ac0-db5c-48c7-8ad9-910e657ab23c"
+        
+        # Product version filtering
+        - name: product_version
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: "^v\\d+\\.\\d+$"
+          description: Filter policies by product version
+          example: "v2.1"
+        
+        # Coverage limit filtering
+        - name: coverage_limit_min
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 0
+          description: Filter policies with coverage limit greater than or equal to this value
+          example: 25000
+        
+        - name: coverage_limit_max
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 0
+          description: Filter policies with coverage limit less than or equal to this value
+          example: 250000
+        
+        # Pagination parameters
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+          description: Maximum number of policies to return
+          example: 50
+        
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of policies to skip (for pagination)
+          example: 0
+      responses:
+        '200':
+          description: A list of insurance policy items matching the filter criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InsurancePolicy'
+                  total_count:
+                    type: integer
+                    description: Total number of policies matching the filters
+                  filtered_count:
+                    type: integer
+                    description: Number of policies returned in this response
+                  has_more:
+                    type: boolean
+                    description: Whether there are more results available
+        '400':
+          description: Bad request - invalid filter parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /items/{policy_id}:
+    get:
+      description: "Retrieve a specific insurance policy by ID"
+      operationId: getItemById
+      summary: Get a single insurance policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique policy identifier
+          example: "781cff3c-f6c3-48bc-b0c8-638f45567e4f"
+      responses:
+        '200':
+          description: Insurance policy details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsurancePolicy'
+        '404':
+          description: Policy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    put:
+      description: "Update an existing insurance policy"
+      operationId: updateItem
+      summary: Update an insurance policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique policy identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsurancePolicy'
+      responses:
+        '200':
+          description: Policy successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+        '404':
+          description: Policy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      description: "Delete an insurance policy"
+      operationId: deleteItem
+      summary: Delete an insurance policy
+      parameters:
+        - name: policy_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique policy identifier
+      responses:
+        '204':
+          description: Policy successfully deleted
+        '404':
+          description: Policy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /items/search:
+    post:
+      description: "Advanced search for insurance policies with complex filter combinations"
+      operationId: searchItems
+      summary: Advanced policy search with multiple criteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad request - invalid search criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /items/stats:
+    get:
+      description: "Get statistical summary of insurance policies"
+      operationId: getStats
+      summary: Get policy statistics and aggregations
+      parameters:
+        - name: group_by
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [state, policy_type, vehicle_type, risk_rating, policy_status]
+          description: Field to group statistics by
+          example: state
+      responses:
+        '200':
+          description: Policy statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: "Creates a new insurance policy item in the DynamoDB table"
+      operationId: createItem
+      summary: Add a new insurance policy to DynamoDB
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsurancePolicy'
+      responses:
+        '201':
+          description: Insurance policy successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    InsurancePolicy:
+      type: object
+      description: Insurance policy data structure
+      properties:
+        policy_id:
+          type: string
+          description: Unique policy identifier
+        customer_id:
+          type: string
+          description: Customer identifier
+        agent_id:
+          type: string
+          description: Insurance agent identifier
+        policy_type:
+          type: string
+          enum: [Liability, Collision, Comprehensive, Full Coverage]
+          description: Type of insurance policy
+        vehicle_type:
+          type: string
+          enum: [Motorcycle, SUV, Sedan, Truck]
+          description: Type of vehicle being insured
+        policy_status:
+          type: string
+          enum: [Active, Lapsed, Cancelled]
+          description: Current status of the policy
+        premium_amount:
+          type: string
+          description: Premium amount (stored as string)
+        deductible:
+          type: string
+          description: Deductible amount
+        coverage_limit:
+          type: string
+          description: Coverage limit amount
+        state:
+          type: string
+          enum: [California, Illinois]
+          description: State where policy is active
+        risk_rating:
+          type: string
+          enum: [Low, Medium, High]
+          description: Risk assessment rating
+        start_date:
+          type: string
+          format: date
+          description: Policy start date
+        end_date:
+          type: string
+          format: date
+          description: Policy end date
+        last_updated:
+          type: string
+          format: date
+          description: Last update timestamp
+        notes:
+          type: string
+          description: Additional notes about the policy
+        is_compliant:
+          type: string
+          enum: [TRUE, FALSE]
+          description: Compliance status
+        product_version:
+          type: string
+          description: Product version (e.g., v1.0, v2.0, v3.0)
+      required:
+        - policy_id
+        - customer_id
+        - agent_id
+        - policy_type
+        - vehicle_type
+        - policy_status
+    CreateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        policy:
+          $ref: '#/components/schemas/InsurancePolicy'
+    UpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        policy:
+          $ref: '#/components/schemas/InsurancePolicy'
+    
+    SearchRequest:
+      type: object
+      properties:
+        filters:
+          type: object
+          properties:
+            states:
+              type: array
+              items:
+                type: string
+                enum: [California, Illinois]
+            policy_types:
+              type: array
+              items:
+                type: string
+                enum: [Liability, Collision, Comprehensive, "Full Coverage"]
+            vehicle_types:
+              type: array
+              items:
+                type: string
+                enum: [Motorcycle, SUV, Sedan, Truck]
+            policy_statuses:
+              type: array
+              items:
+                type: string
+                enum: [Active, Lapsed, Cancelled]
+            risk_ratings:
+              type: array
+              items:
+                type: string
+                enum: [Low, Medium, High]
+            premium_range:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+            date_range:
+              type: object
+              properties:
+                start_date_from:
+                  type: string
+                  format: date
+                start_date_to:
+                  type: string
+                  format: date
+                end_date_from:
+                  type: string
+                  format: date
+                end_date_to:
+                  type: string
+                  format: date
+            compliance:
+              type: string
+              enum: [TRUE, FALSE]
+        sort:
+          type: object
+          properties:
+            field:
+              type: string
+              enum: [premium_amount, start_date, end_date, last_updated]
+            order:
+              type: string
+              enum: [asc, desc]
+              default: asc
+        pagination:
+          type: object
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              maximum: 1000
+              default: 100
+            offset:
+              type: integer
+              minimum: 0
+              default: 0
+    
+    SearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InsurancePolicy'
+        total_count:
+          type: integer
+          description: Total number of policies matching the search criteria
+        returned_count:
+          type: integer
+          description: Number of policies returned in this response
+        has_more:
+          type: boolean
+          description: Whether there are more results available
+        search_metadata:
+          type: object
+          properties:
+            execution_time_ms:
+              type: number
+              description: Search execution time in milliseconds
+            filters_applied:
+              type: array
+              items:
+                type: string
+              description: List of filters that were applied
+    
+    StatsResponse:
+      type: object
+      properties:
+        total_policies:
+          type: integer
+          description: Total number of policies
+        summary:
+          type: object
+          properties:
+            by_state:
+              type: object
+              additionalProperties:
+                type: integer
+            by_policy_type:
+              type: object
+              additionalProperties:
+                type: integer
+            by_vehicle_type:
+              type: object
+              additionalProperties:
+                type: integer
+            by_policy_status:
+              type: object
+              additionalProperties:
+                type: integer
+            by_risk_rating:
+              type: object
+              additionalProperties:
+                type: integer
+        averages:
+          type: object
+          properties:
+            premium_amount:
+              type: number
+              description: Average premium amount
+            coverage_limit:
+              type: number
+              description: Average coverage limit
+        ranges:
+          type: object
+          properties:
+            premium_amount:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+            coverage_limit:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+        compliance_rate:
+          type: number
+          description: Percentage of compliant policies
+          minimum: 0
+          maximum: 100
+    
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+        path:
+          type: string
+          description: API path that caused the error
