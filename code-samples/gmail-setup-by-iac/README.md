@@ -119,5 +119,3 @@ The notebook automatically generates unique resource names using random suffixes
 - Credentials stored securely in AWS Secrets Manager
 - Random suffixes prevent resource name conflicts
 - Private keys handled as secure strings
-
-
