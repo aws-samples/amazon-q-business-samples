@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Drive Upload Plugin
+  version: 1.0.0
+servers:
+  - url: <your-api-gateway-url-with-stage>
+paths:
+  /upload:
+    post:
+      operationId: uploadFile
+      description: Uploads a specified file to Google Drive through a Lambda function
+      summary: Upload file to Google Drive
+      security:
+        - OAuth2: ['drive.file']
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  description: "Name of the file to be uploaded to Google Drive"
+                fileContent:
+                  type: string
+                  description: "File content"
+                folderId:
+                  type: string
+                  description: "Google Drive folder ID where the file will be uploaded"
+      responses:
+        '200':
+          description: File uploaded successfully
+        '403':
+          description: Access denied
+        '500':
+          description: Server error
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: <your-cognito-domain-name>/oauth2/authorize
+          tokenUrl: <your-cognito-domain-name>/oauth2/token
+          scopes:
+            openid: OpenID Connect scope
+            email: Email scope
+            profile: User profile scope
+      x-amazon-apigateway-authtype: oauth2
+      x-amazon-apigateway-authorizer:
+        type: jwt
+        jwtConfiguration:
+          issuer: https://cognito-idp.<your-region>.amazonaws.com/<your-user-pool-id>
+          audience:
+            - <your-cognito-app-client-id>
