@@ -1,0 +1,53 @@
+openapi: "3.0.1"
+info:
+  title: "Google Drive Upload API"
+  version: "1.0.0"
+paths:
+  /upload:
+    post:
+      summary: "Upload file to Google Drive"
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:{region}:lambda:path/2015-03-31/functions/{your-lambda-arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+        timeoutInMillis: 29000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - fileName
+                - fileContent
+                - folderId
+              properties:
+                fileName:
+                  type: "string"
+                  description: "Name of the file to be uploaded to Google Drive"
+                fileContent:
+                  type: "string"
+                  description: "Base64 encoded file content"
+                folderId:
+                  type: "string"
+                  description: "Google Drive Shared drive ID where the file will be uploaded"
+      responses:
+        200:
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  fileId:
+                    type: "string"
+                    description: "Unique identifier of the uploaded file in Google Drive"
+                  webViewLink:
+                    type: "string"
+                    description: "Direct link to view the file in Google Drive web interface"
+        403:
+          description: Access denied
+        500:
+          description: Server error
+        
