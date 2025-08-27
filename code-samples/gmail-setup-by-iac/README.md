@@ -27,13 +27,20 @@ The notebook creates and configures AWS resources needed to integrate Gmail with
 
 ## Setup Instructions
 
-1. Clone this repository:
+1. Install and Configure
 
-```
-git clone https://github.com/aws-samples/amazon-q-business-samples.git
-cd gmail-setup-by-iac
+# Clone with no checkout
+git clone --no-checkout https://github.com/aws-samples/amazon-q-business-samples.git
+cd amazon-q-business-samples
 
-```
+# Set up sparse checkout for this project only
+git sparse-checkout set code-samples/gmail-setup-by-iac
+
+# Checkout the content
+git checkout main
+
+# Navigate to the project
+cd code-samples/gmail-setup-by-iac
 
 2. (Optional) Create and activate a virtual environment:
 
