@@ -30,8 +30,8 @@ The notebook creates and configures AWS resources needed to integrate Gmail with
 1. Clone this repository:
 
 ```
-git clone <repository-url>
-cd setup-q-business-gmail
+git clone https://github.com/aws-samples/amazon-q-business-samples.git
+cd gmail-setup-by-iac
 
 ```
 
