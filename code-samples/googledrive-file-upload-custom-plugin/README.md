@@ -39,9 +39,8 @@ The following is a summary of the functionality of the architecture:
 ## Prerequisites
 
 * [Create an AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) if you do not already have one.
-* The [AWS Identity and Access Management (IAM)](https://aws.amazon.com/iam) user that you use must have permissions to make the necessary AWS service calls and manage AWS resources mentioned in this post. While providing permissions to the IAM user, follow the [principle of least-privilege](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege).
+* The Amazon Q Business service administrator must have permissions to make the necessary AWS service calls and manage AWS resources mentioned in this post. 
 * You must enable [AWS IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/get-set-up-for-idc.html).
-* As a prerequisite to deploying this solution, you will need to set up [Google Workspace Account](https://workspace.google.com/business/signup/welcome?source=gafb-lp_business-hero-en&hl=en&ga_region=noram&ga_country=us&ga_lang=en&uj=&uj=gafb-lp_business-def-en). If you already have these set up, you can use your existing account.  
 * Amazon Q Business Pro licenses. This is required to use custom plugins functionality. For pricing information, visit the [Amazon Q pricing page](https://aws.amazon.com/q/pricing/), where Pro licenses start at $20 per user per month.
 * **Python 3.8 or higher** installed on your local machine for Lambda function development. Download from [python.org](https://www.python.org/downloads/) or install via package manager:
   - **macOS**: `brew install python`
