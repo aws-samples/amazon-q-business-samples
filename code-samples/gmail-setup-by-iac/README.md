@@ -1,8 +1,8 @@
 # Gmail Infrastructure as Code (IaC) Notebook
-This Jupyter notebook automates the setup of AWS Q Business application with Gmail integration using Infrastructure as Code principles.
+This Jupyter notebook automates the setup of Amazon Q Business application with Gmail integration using Infrastructure as Code principles.
 
 ## Overview
-The notebook creates and configures AWS resources needed to integrate Gmail with AWS Q Business, including:
+The notebook creates and configures AWS resources needed to integrate Gmail with Amazon Q Business, including:
 
 - AWS Secrets Manager secrets for Gmail credentials
 - IAM roles for data source access
